@@ -1,64 +1,364 @@
 <mxfile host="65bd71144e">
-    <diagram id="_DZeZV4canNf_0KFYUl-" name="ページ1">
-        <mxGraphModel dx="733" dy="452" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <diagram id="_DZeZV4canNf_0KFYUl-" name="CertPath ER図">
+        <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="Users" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="40" y="170" width="180" height="250" as="geometry"/>
+                
+                <!-- Users Entity -->
+                <mxCell id="users" value="Users" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="200" width="200" height="270" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="2">
-                    <mxGeometry y="30" width="180" height="30" as="geometry"/>
+                <mxCell id="users_pk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="users">
+                    <mxGeometry y="30" width="200" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="3">
-                    <mxGeometry width="30" height="30" as="geometry">
-                        <mxRectangle width="30" height="30" as="alternateBounds"/>
+                <mxCell id="users_pk_label" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="users_pk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="users_uid" value="uid (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="users_pk">
+                    <mxGeometry x="30" width="170" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="users_attrs" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="users">
+                    <mxGeometry y="60" width="200" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="users_attrs_empty" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="users_attrs">
+                    <mxGeometry width="30" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="users_attrs_list" value="displayName (string)&#10;email (string)&#10;targetCertification (string)&#10;startDate (timestamp)&#10;isProgressPublic (boolean)&#10;createdAt (timestamp)&#10;updatedAt (timestamp)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="users_attrs">
+                    <mxGeometry x="30" width="170" height="210" as="geometry"/>
+                </mxCell>
+
+                <!-- CertificationTemplates Entity -->
+                <mxCell id="cert_templates" value="CertificationTemplates" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="400" y="50" width="220" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="cert_templates_pk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="cert_templates">
+                    <mxGeometry y="30" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="cert_templates_pk_label" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="cert_templates_pk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="cert_templates_id" value="id (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="cert_templates_pk">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="cert_templates_attrs" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="cert_templates">
+                    <mxGeometry y="60" width="220" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="cert_templates_attrs_empty" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="cert_templates_attrs">
+                    <mxGeometry width="30" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="cert_templates_attrs_list" value="name (string)&#10;description (text)&#10;category (string)&#10;estimatedPeriod (number)&#10;difficultyLevel (string)&#10;createdAt (timestamp)&#10;isActive (boolean)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="cert_templates_attrs">
+                    <mxGeometry x="30" width="190" height="180" as="geometry"/>
+                </mxCell>
+
+                <!-- TemplateTasks Entity -->
+                <mxCell id="template_tasks" value="TemplateTasks" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="80" width="220" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_pk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="template_tasks">
+                    <mxGeometry y="30" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_pk_label" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="template_tasks_pk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_id" value="id (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="template_tasks_pk">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_fk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="template_tasks">
+                    <mxGeometry y="60" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_fk_label" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="template_tasks_fk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_cert_id" value="certificationId (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="template_tasks_fk">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_attrs" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="template_tasks">
+                    <mxGeometry y="90" width="220" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_attrs_empty" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="template_tasks_attrs">
+                    <mxGeometry width="30" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="template_tasks_attrs_list" value="title (string)&#10;description (text)&#10;estimatedHours (number)&#10;priority (number)&#10;orderIndex (number)&#10;referenceLinks (array)&#10;createdAt (timestamp)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="template_tasks_attrs">
+                    <mxGeometry x="30" width="190" height="150" as="geometry"/>
+                </mxCell>
+
+                <!-- UserProjects Entity -->
+                <mxCell id="user_projects" value="UserProjects" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="350" y="350" width="220" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_pk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="user_projects">
+                    <mxGeometry y="30" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_pk_label" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_projects_pk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_id" value="id (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_projects_pk">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_fks" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="user_projects">
+                    <mxGeometry y="60" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_fks_label" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_projects_fks">
+                    <mxGeometry width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_fks_list" value="userId (string)&#10;certificationId (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_projects_fks">
+                    <mxGeometry x="30" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_attrs" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="user_projects">
+                    <mxGeometry y="120" width="220" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_attrs_empty" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_projects_attrs">
+                    <mxGeometry width="30" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_projects_attrs_list" value="projectName (string)&#10;targetDate (date)&#10;status (string)&#10;progressPercentage (number)&#10;createdAt (timestamp)&#10;updatedAt (timestamp)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_projects_attrs">
+                    <mxGeometry x="30" width="190" height="150" as="geometry"/>
+                </mxCell>
+
+                <!-- UserTasks Entity -->
+                <mxCell id="user_tasks" value="UserTasks" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="650" y="380" width="220" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_pk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="user_tasks">
+                    <mxGeometry y="30" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_pk_label" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_tasks_pk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_id" value="id (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_tasks_pk">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_fks" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="user_tasks">
+                    <mxGeometry y="60" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_fks_label" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_tasks_fks">
+                    <mxGeometry width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_fks_list" value="userProjectId (string)&#10;templateTaskId (string, nullable)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_tasks_fks">
+                    <mxGeometry x="30" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_attrs" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="user_tasks">
+                    <mxGeometry y="120" width="220" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_attrs_empty" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_tasks_attrs">
+                    <mxGeometry width="30" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_tasks_attrs_list" value="title (string)&#10;description (text)&#10;estimatedHours (number)&#10;isCompleted (boolean)&#10;completedAt (timestamp)&#10;orderIndex (number)&#10;isCustomTask (boolean)&#10;createdAt (timestamp)&#10;updatedAt (timestamp)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="user_tasks_attrs">
+                    <mxGeometry x="30" width="190" height="180" as="geometry"/>
+                </mxCell>
+
+                <!-- CommunityActivity Entity -->
+                <mxCell id="community_activity" value="CommunityActivity" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="550" width="220" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_pk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="community_activity">
+                    <mxGeometry y="30" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_pk_label" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="community_activity_pk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_id" value="id (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="community_activity_pk">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_fks" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="community_activity">
+                    <mxGeometry y="60" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_fks_label" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="community_activity_fks">
+                    <mxGeometry width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_fks_list" value="userId (string)&#10;userProjectId (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="community_activity_fks">
+                    <mxGeometry x="30" width="190" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_attrs" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="community_activity">
+                    <mxGeometry y="120" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_attrs_empty" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="community_activity_attrs">
+                    <mxGeometry width="30" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="community_activity_attrs_list" value="activityType (string)&#10;message (string)&#10;progressPercentage (number)&#10;createdAt (timestamp)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="community_activity_attrs">
+                    <mxGeometry x="30" width="190" height="90" as="geometry"/>
+                </mxCell>
+
+                <!-- Likes Entity -->
+                <mxCell id="likes" value="Likes" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+                    <mxGeometry x="350" y="700" width="220" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_pk" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=1;" vertex="1" parent="likes">
+                    <mxGeometry y="30" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_pk_label" value="PK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="likes_pk">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_id" value="id (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="likes_pk">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_fks" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="likes">
+                    <mxGeometry y="60" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_fks_label" value="FK" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;fontStyle=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="likes_fks">
+                    <mxGeometry width="30" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_fks_list" value="userId (string)&#10;targetUserId (string)&#10;activityId (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="likes_fks">
+                    <mxGeometry x="30" width="190" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_attrs" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="likes">
+                    <mxGeometry y="150" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_attrs_empty" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="likes_attrs">
+                    <mxGeometry width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="likes_attrs_list" value="likeType (string)&#10;createdAt (timestamp)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="likes_attrs">
+                    <mxGeometry x="30" width="190" height="30" as="geometry"/>
+                </mxCell>
+
+                <!-- Relationships -->
+                <!-- Users → UserProjects (1:N) -->
+                <mxCell id="rel_users_projects" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="users" target="user_projects">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="250" y="335" as="sourcePoint"/>
+                        <mxPoint x="300" y="285" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="5" value="uid (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;fontStyle=5;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="3">
-                    <mxGeometry x="30" width="150" height="30" as="geometry">
-                        <mxRectangle width="150" height="30" as="alternateBounds"/>
+                <mxCell id="rel_users_projects_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_users_projects">
+                    <mxGeometry x="-1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_users_projects_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_users_projects">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- CertificationTemplates → UserProjects (1:N) -->
+                <mxCell id="rel_cert_projects" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cert_templates" target="user_projects">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="510" y="290" as="sourcePoint"/>
+                        <mxPoint x="460" y="350" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="6" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="2">
-                    <mxGeometry y="60" width="180" height="30" as="geometry"/>
+                <mxCell id="rel_cert_projects_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=center;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_cert_projects">
+                    <mxGeometry x="-1" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;editable=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="6">
-                    <mxGeometry width="30" height="30" as="geometry">
-                        <mxRectangle width="30" height="30" as="alternateBounds"/>
+                <mxCell id="rel_cert_projects_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=center;verticalAlign=top;" connectable="0" vertex="1" parent="rel_cert_projects">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- CertificationTemplates → TemplateTasks (1:N) -->
+                <mxCell id="rel_cert_tasks" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="cert_templates" target="template_tasks">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="620" y="170" as="sourcePoint"/>
+                        <mxPoint x="720" y="200" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="8" value="displayName (string)" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="6">
-                    <mxGeometry x="30" width="150" height="30" as="geometry">
-                        <mxRectangle width="150" height="30" as="alternateBounds"/>
+                <mxCell id="rel_cert_tasks_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_cert_tasks">
+                    <mxGeometry x="-1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_cert_tasks_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_cert_tasks">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- UserProjects → UserTasks (1:N) -->
+                <mxCell id="rel_projects_tasks" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="user_projects" target="user_tasks">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="570" y="485" as="sourcePoint"/>
+                        <mxPoint x="650" y="530" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="9" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="2">
-                    <mxGeometry y="90" width="180" height="30" as="geometry"/>
+                <mxCell id="rel_projects_tasks_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_projects_tasks">
+                    <mxGeometry x="-1" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;editable=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="9">
-                    <mxGeometry width="30" height="30" as="geometry">
-                        <mxRectangle width="30" height="30" as="alternateBounds"/>
+                <mxCell id="rel_projects_tasks_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_projects_tasks">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- TemplateTasks ↔ UserTasks (N:N) -->
+                <mxCell id="rel_template_user_tasks" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="template_tasks" target="user_tasks">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="830" y="320" as="sourcePoint"/>
+                        <mxPoint x="870" y="380" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="11" value="email" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="9">
-                    <mxGeometry x="30" width="150" height="30" as="geometry">
-                        <mxRectangle width="150" height="30" as="alternateBounds"/>
+                <mxCell id="rel_template_user_tasks_cardN1" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=center;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_template_user_tasks">
+                    <mxGeometry x="-1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_template_user_tasks_cardN2" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=top;" connectable="0" vertex="1" parent="rel_template_user_tasks">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- Users → CommunityActivity (1:N) -->
+                <mxCell id="rel_users_activity" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="users" target="community_activity">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="150" y="470" as="sourcePoint"/>
+                        <mxPoint x="160" y="550" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="12" value="" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;" vertex="1" parent="2">
-                    <mxGeometry y="120" width="180" height="30" as="geometry"/>
+                <mxCell id="rel_users_activity_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=center;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_users_activity">
+                    <mxGeometry x="-1" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;editable=1;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="12">
-                    <mxGeometry width="30" height="30" as="geometry">
-                        <mxRectangle width="30" height="30" as="alternateBounds"/>
+                <mxCell id="rel_users_activity_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=center;verticalAlign=top;" connectable="0" vertex="1" parent="rel_users_activity">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- UserProjects → CommunityActivity (1:N) -->
+                <mxCell id="rel_projects_activity" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="user_projects" target="community_activity">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="350" y="620" as="sourcePoint"/>
+                        <mxPoint x="270" y="550" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="14" value="targetCertification" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;whiteSpace=wrap;html=1;" vertex="1" parent="12">
-                    <mxGeometry x="30" width="150" height="30" as="geometry">
-                        <mxRectangle width="150" height="30" as="alternateBounds"/>
+                <mxCell id="rel_projects_activity_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_projects_activity">
+                    <mxGeometry x="-1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_projects_activity_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=left;verticalAlign=top;" connectable="0" vertex="1" parent="rel_projects_activity">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- Users → Likes (1:N) - as sender -->
+                <mxCell id="rel_users_likes_sender" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;curved=1;" edge="1" parent="1" source="users" target="likes">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="150" y="470" as="sourcePoint"/>
+                        <mxPoint x="350" y="700" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="150" y="650"/>
+                            <mxPoint x="300" y="650"/>
+                        </Array>
                     </mxGeometry>
                 </mxCell>
+                <mxCell id="rel_users_likes_sender_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=center;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_users_likes_sender">
+                    <mxGeometry x="-1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_users_likes_sender_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=left;verticalAlign=top;" connectable="0" vertex="1" parent="rel_users_likes_sender">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- Users → Likes (1:N) - as target -->
+                <mxCell id="rel_users_likes_target" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;" edge="1" parent="1" source="users" target="likes">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="250" y="470" as="sourcePoint"/>
+                        <mxPoint x="350" y="790" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="300" y="790"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel_users_likes_target_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_users_likes_target">
+                    <mxGeometry x="-1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_users_likes_target_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=left;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_users_likes_target">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
+                <!-- CommunityActivity → Likes (1:N) -->
+                <mxCell id="rel_activity_likes" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="community_activity" target="likes">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="270" y="655" as="sourcePoint"/>
+                        <mxPoint x="460" y="700" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="rel_activity_likes_card1" value="1" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="rel_activity_likes">
+                    <mxGeometry x="-1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rel_activity_likes_cardN" value="N" style="resizable=0;html=1;whiteSpace=wrap;align=center;verticalAlign=top;" connectable="0" vertex="1" parent="rel_activity_likes">
+                    <mxGeometry x="1" as="geometry"/>
+                </mxCell>
+
             </root>
         </mxGraphModel>
     </diagram>
