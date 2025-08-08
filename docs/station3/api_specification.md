@@ -1,67 +1,18 @@
-# CertPath API仕様書
 
-## 1. 概要
+# API 仕様書
 
-### API基本情報
-- **プロジェクト名**: CertPath
-- **バージョン**: v1.0
-- **ベースURL**: https://certpath-app.web.app/api/v1
-- **認証方式**: Firebase Authentication (JWT)
-- **データ形式**: JSON
-- **文字エンコード**: UTF-8
+**質問の仕方（リクエスト）**
+- どこに質問するのか（URL）
+- どんな言葉で質問するか（パラメータ）
+- パスワードが必要かどうか（認証）
 
-### アーキテクチャ
-- **フロントエンド**: React (Direct Firestore SDK)
-- **バックエンド**: Firebase Firestore + Cloud Functions
-- **認証**: Firebase Authentication
-- **ストレージ**: Firebase Storage (プロフィール画像)
+**返事の内容（レスポンス）**
+- どんな形で返ってくるか（型などのレスポンス形式）
+- エラーの場合はどうなるか（エラーメッセージーやエラーコードの定義等、エラーハンドリング）
 
-### エンドポイント構成
-```
-Direct Firestore (リアルタイム)
-├── Users Collection
-├── UserProjects Collection
-├── UserTasks Collection
-└── CommunityActivity Collection
+## API エンドポイント詳細
 
-Cloud Functions (ビジネスロジック)
-├── /api/v1/auth/*
-├── /api/v1/projects/*
-├── /api/v1/community/*
-└── /api/v1/certifications/*
-```
-
-## 2. 認証・セキュリティ
-
-### 2.1 認証フロー
-```javascript
-// Firebase Auth トークン取得
-const user = firebase.auth().currentUser;
-const token = await user.getIdToken();
-
-// API リクエストヘッダー
-headers: {
-  'Authorization': `Bearer ${token}`,
-  'Content-Type': 'application/json'
-}
-```
-
-### 2.2 エラーレスポンス形式
-```json
-{
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "認証が必要です",
-    "details": "Firebase Auth token is missing or invalid"
-  },
-  "timestamp": "2025-01-01T10:00:00Z",
-  "requestId": "req_123456"
-}
-```
-
-## 3. API エンドポイント詳細
-
-### 3.1 認証 (Authentication)
+### 認証 (Authentication)
 
 #### POST /api/v1/auth/register
 新規ユーザー登録（プロフィール情報の初期設定）
@@ -134,7 +85,7 @@ headers: {
 }
 ```
 
-### 3.2 資格・テンプレート (Certifications)
+### 2 資格テンプレート (Certifications)
 
 #### GET /api/v1/certifications
 利用可能な資格一覧取得
@@ -216,7 +167,7 @@ headers: {
 }
 ```
 
-### 3.3 プロジェクト管理 (Projects)
+### 3 プロジェクト管理 (Projects)
 
 #### POST /api/v1/projects
 新しいプロジェクト作成（テンプレートからコピー）
@@ -340,7 +291,7 @@ headers: {
 }
 ```
 
-### 3.4 タスク管理 (Tasks)
+### 4 タスク (Tasks)
 
 #### GET /api/v1/projects/{projectId}/tasks
 プロジェクトのタスク一覧取得
@@ -435,7 +386,7 @@ headers: {
 }
 ```
 
-### 3.5 コミュニティ (Community)
+### 5 コミュニティ (Community)
 
 #### GET /api/v1/community/activities
 コミュニティ活動一覧取得
@@ -539,88 +490,9 @@ headers: {
 }
 ```
 
-## 4. Firebase Firestore Direct Access
+## 2. エラーハンドリング
 
-### 4.1 リアルタイムリスナー
-フロントエンドからFirestoreに直接アクセスする機能
-
-```javascript
-// ユーザープロジェクトのリアルタイム監視
-const unsubscribe = db.collection('UserProjects')
-  .where('userId', '==', currentUser.uid)
-  .onSnapshot((snapshot) => {
-    const projects = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    setProjects(projects);
-  });
-
-// コミュニティ活動のリアルタイム監視
-const unsubscribeCommunity = db.collection('CommunityActivity')
-  .orderBy('createdAt', 'desc')
-  .limit(20)
-  .onSnapshot((snapshot) => {
-    const activities = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    setActivities(activities);
-  });
-```
-
-### 4.2 セキュリティルール
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Users: 自分のデータのみ読み書き可能
-    match /Users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // UserProjects: 自分のプロジェクトのみ読み書き可能
-    match /UserProjects/{projectId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
-    }
-    
-    // UserTasks: 自分のタスクのみ読み書き可能
-    match /UserTasks/{taskId} {
-      allow read, write: if request.auth != null &&
-        request.auth.uid == get(/databases/$(database)/documents/UserProjects/$(resource.data.userProjectId)).data.userId;
-    }
-    
-    // CommunityActivity: 読み取り全員、書き込み認証ユーザー
-    match /CommunityActivity/{activityId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
-    }
-    
-    // Likes: 読み取り全員、書き込み認証ユーザー
-    match /Likes/{likeId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
-    }
-    
-    // CertificationTemplates: 全員読み取り可能
-    match /CertificationTemplates/{templateId} {
-      allow read: if request.auth != null;
-    }
-    
-    // TemplateTasks: 全員読み取り可能
-    match /TemplateTasks/{taskId} {
-      allow read: if request.auth != null;
-    }
-  }
-}
-```
-
-## 5. エラーハンドリング
-
-### 5.1 HTTPステータスコード
+### 2.1 HTTPステータスコード
 - `200 OK`: 成功
 - `201 Created`: 作成成功
 - `400 Bad Request`: リクエスト形式エラー
@@ -630,7 +502,7 @@ service cloud.firestore {
 - `409 Conflict`: データ競合
 - `500 Internal Server Error`: サーバーエラー
 
-### 5.2 エラーレスポンス例
+### 2.2 エラーレスポンス例
 ```json
 {
   "error": {
@@ -643,34 +515,3 @@ service cloud.firestore {
   "requestId": "req_789012"
 }
 ```
-
-## 6. パフォーマンス最適化
-
-### 6.1 キャッシュ戦略
-- **Static Data**: 資格テンプレート（1時間キャッシュ）
-- **User Data**: ユーザープロジェクト（リアルタイム更新）
-- **Community Data**: コミュニティ活動（5分キャッシュ）
-
-### 6.2 ページネーション
-```json
-{
-  "data": [...],
-  "pagination": {
-    "hasMore": true,
-    "nextCursor": "cursor_abc123",
-    "totalCount": 150,
-    "page": 1,
-    "limit": 20
-  }
-}
-```
-
-## 7. レート制限
-- **認証済みユーザー**: 1000 requests/hour
-- **未認証アクセス**: 100 requests/hour
-- **特定エンドポイント**: POST /likes は 60 requests/hour
-
----
-
-この API仕様書により、CertPath アプリケーションのバックエンド設計が完了します。
-次の工程では、この API を使用する画面設計を行います。

@@ -16,6 +16,11 @@
   - 開発速度
     - 一ヶ月の短期開発のため、サーバー構築の負担を軽減。フロントエンドの開発に集中
 - デプロイ: Firebase Hosting
+  - セキュリティ面
+    - グローバル CDN を基盤としているため構想で安全な配信が可能
+  - SPA に適している
+  - 運用効率
+    - 短期間の個人開発であることを踏まえ、簡単に公開できるため採用
 
 
 ## 2. 画面設計図
@@ -31,6 +36,8 @@ https://app.diagrams.net/?libs=general;flowchart#G1rjE7D1RYuYwux4Kf7qyqK_A4rItZW
 https://drive.google.com/file/d/1ediuQ4CZttmomDAEypwiYBCq4KHoprRd/view?usp=sharing
 
 ## 6. API 仕様書
+下記に記載
+docs/station3/api_specification.md
 
 ## 7. テーブル定義書
 https://docs.google.com/spreadsheets/d/1KPBC4NWkiCfJaCj6PxlhbdcIwjb-WlHhjKYOwADml0I/edit?gid=2112901452#gid=2112901452
