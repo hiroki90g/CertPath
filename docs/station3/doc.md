@@ -40,4 +40,4 @@ https://drive.google.com/file/d/1ediuQ4CZttmomDAEypwiYBCq4KHoprRd/view?usp=shari
 docs/station3/api_specification.md
 
 ## 7. テーブル定義書
-https://docs.google.com/spreadsheets/d/1KPBC4NWkiCfJaCj6PxlhbdcIwjb-WlHhjKYOwADml0I/edit?gid=2112901452#gid=2112901452
+https://docs.google.com/spreadsheets/d/1KPBC4NWkiCfJaCj6PxlhbdcIwjb-WlHhjKYOwADml0I/edit?gid=733441193#gid=733441193
