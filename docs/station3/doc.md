@@ -38,16 +38,12 @@ https://app.diagrams.net/?splash=0#G1KeyfSBaBjgrzZVWyUJBxkkxAPsMEnCmH#%7B%22page
 https://app.diagrams.net/?libs=general;flowchart#G1rjE7D1RYuYwux4Kf7qyqK_A4rItZWKjq#%7B%22pageId%22%3A%22C5RBs43oDa-KdzZeNtuy%22%7D
 
 ## 5. ER 図
-初期バージョン
-https://drive.google.com/file/d/1ediuQ4CZttmomDAEypwiYBCq4KHoprRd/view?usp=sharing
-
-v2
-user_tasks テーブルと template_tasks テーブルを tasks テーブルに統合→is_public フラグで分ける
 https://drive.google.com/file/d/1_DLjQ4gUMpe34P0cDDE052CE-XtC84kc/view?usp=sharing
 
 ## 6. API 仕様書
 下記に記載
 docs/station3/api_specification.md
+→Station04で更新し、yamlファイルに記載
 
 ## 7. テーブル定義書
 https://docs.google.com/spreadsheets/d/1KPBC4NWkiCfJaCj6PxlhbdcIwjb-WlHhjKYOwADml0I/edit?gid=733441193#gid=733441193
