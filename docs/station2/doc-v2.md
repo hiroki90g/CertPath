@@ -77,7 +77,7 @@
 ### 5.1 機能要件
 #### 5.1.1 コア機能
 **ユーザー認証機能**
-- Googleアカウントでのログイン（Firebase Auth使用）
+- Googleアカウントでのログイン（Supabase Auth使用）
 - プロフィール設定（ニックネーム、目標資格、学習開始日、プロフィール画像）
 
 **資格テンプレート機能**
@@ -127,103 +127,103 @@
 - モバイル対応（レスポンシブデザイン）
 
 #### 5.2.3 セキュリティ要件
-- Firebase Security Rulesによるデータアクセス制御
+- Supabase Row Level Security（RLS）によるデータアクセス制御
 - ユーザーデータの適切な匿名化
 - 不適切なコンテンツのフィルタリング
 
-### 5.3 データベース設計（Firebase Firestore）
+### 5.3 データベース設計（Supabase PostgreSQL）
 
-#### 5.3.1 users コレクション
+#### 5.3.1 users テーブル
 | フィールド名 | データ型 | 必須 | デフォルト値 | 説明 | バリデーション | 例 |
 |---|---|---|---|---|---|---|
-| uid | string | ○ | - | Firebase Auth UID | 英数字、最大128文字 | abc123def456 |
-| displayName | string | ○ | - | 表示名 | 1-200文字 | 太郎 |
-| email | string | ○ | - | メールアドレス | メールアドレス形式、ユニーク | taro@example.com |
-| targetCertification | string |  | null | 目標資格 | 最大200文字 | 基本情報技術者 |
-| startDate | timestamp |  | null | 学習開始日 | タイムスタンプ型 | 2025-01-15T00:00:00Z |
-| isProgressPublic | boolean | ○ | TRUE | 進捗公開フラグ | true/false | TRUE |
-| profileImage | string |  | null | プロフィール画像URL | 画像URL | https://storage.certpath.com/... |
-| createdAt | timestamp | ○ | serverTimestamp() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
-| updatedAt | timestamp | ○ | serverTimestamp() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| id | uuid | ○ | gen_random_uuid() | Supabase Auth UID | UUID形式 | abc123def456 |
+| display_name | text | ○ | - | 表示名 | 1-200文字 | 太郎 |
+| email | text | ○ | - | メールアドレス | メールアドレス形式、ユニーク | taro@example.com |
+| target_certification | text |  | null | 目標資格 | 最大200文字 | 基本情報技術者 |
+| start_date | timestamptz |  | null | 学習開始日 | タイムスタンプ型 | 2025-01-15T00:00:00Z |
+| is_progress_public | boolean | ○ | true | 進捗公開フラグ | true/false | true |
+| profile_image | text |  | null | プロフィール画像URL | 画像URL | https://storage.certpath.com/... |
+| created_at | timestamptz | ○ | now() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| updated_at | timestamptz | ○ | now() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
 
-#### 5.3.2 certification コレクション（資格テンプレート）
+#### 5.3.2 certifications テーブル（資格テンプレート）
 | フィールド名 | データ型 | 必須 | デフォルト値 | 説明 | バリデーション | 例 |
 |---|---|---|---|---|---|---|
-| id | string | ○ |  - | テンプレートID | 英数字、最大128文字 | basic_info_2025 |
-| name | string | ○ | -  | 資格名 | 1-200文字 | 基本情報技術者試験 |
-| description | string | ○ | - | 資格説明 | 最大2000文字 | ITエンジニアの基礎知識を問う国家試験 |
-| category | string | ○ | null | カテゴリ | IT/AWS/Salesforce... | IT基礎 |
-| estimatedPeriod | number | ○ | - | 推定学習期間（日） | 時間型（日/時間/分） | 90 |
-| difficultyLevel | string | ○ | - | 難易度 | 初級/中級/上級 | 初級 |
-| officialUrl | string |  | - | 公式サイトURL | URL形式 | https://www.jitec.ipa.go.jp/ |
-| passingScore | number |  | - | 合格点 | 数字 | 60 |
-| examFee | number |  | - | 受験料（円） | 数字 | 7500 |
-| isActive | boolean | ○ | FALSE | 有効フラグ | true/false | TRUE |
-| createdAt | timestamp | ○ | serverTimestamp() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
-| updatedAt | timestamp | ○ | serverTimestamp() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| id | uuid | ○ | gen_random_uuid() | テンプレートID | UUID形式 | basic_info_2025 |
+| name | text | ○ | -  | 資格名 | 1-200文字 | 基本情報技術者試験 |
+| description | text | ○ | - | 資格説明 | 最大2000文字 | ITエンジニアの基礎知識を問う国家試験 |
+| category | text | ○ | null | カテゴリ | IT/AWS/Salesforce... | IT基礎 |
+| estimated_period | integer | ○ | - | 推定学習期間（日） | 正の整数 | 90 |
+| difficulty_level | text | ○ | - | 難易度 | 初級/中級/上級 | 初級 |
+| official_url | text |  | - | 公式サイトURL | URL形式 | https://www.jitec.ipa.go.jp/ |
+| passing_score | integer |  | - | 合格点 | 数字 | 60 |
+| exam_fee | integer |  | - | 受験料（円） | 数字 | 7500 |
+| is_active | boolean | ○ | false | 有効フラグ | true/false | true |
+| created_at | timestamptz | ○ | now() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| updated_at | timestamptz | ○ | now() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
 
-#### 5.3.3 projects コレクション（ユーザープロジェクト）
+#### 5.3.3 projects テーブル（ユーザープロジェクト）
 | フィールド名 | データ型 | 必須 | デフォルト値 | 説明 | バリデーション | 例 |
 |---|---|---|---|---|---|---|
-| id | string | ○ | - | プロジェクトID | 英数字、最大128文字 | proj_user1_001 |
-| userId | string | ○ | - | ユーザーID | usersコレクションへの参照 | abc123def456 |
-| certificationId | string | ○ | - | 資格ID | certificationコレクションへの参照 | basic_info_2025 |
-| projectName | string | ○ | null | プロジェクト名 | 1-200文字 | 基本情報 2025年春試験 |
-| targetDate | timestamp |  | null | 目標試験日 | タイムスタンプ型 | 2025-04-20T00:00:00Z |
-| status | string | ○ | active | ステータス | active/pending/done | active |
-| progressPercentage | number | ○ | 0 | 進捗率 | 0-100の整数 | 65 |
-| totalTasks | number |  | null | 総タスク数 | 整数、紐づくTasksの合計数 | 25 |
-| completedTasks | number |  | null | 完了タスク数 | 整数、紐づく完了Tasksの合計数 | 16 |
-| totalEstimatedHours | number |  | null | 総推定時間 | 整数、Tasksの合計時間 | 120 |
-| studiedHours | number | ○ | 0 | 学習済み時間 | 整数 | 80 |
-| createdAt | timestamp | ○ | serverTimestamp() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
-| updatedAt | timestamp | ○ | serverTimestamp() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| id | uuid | ○ | gen_random_uuid() | プロジェクトID | UUID形式 | proj_user1_001 |
+| user_id | uuid | ○ | - | ユーザーID | usersテーブルへの参照 | abc123def456 |
+| certification_id | uuid | ○ | - | 資格ID | certificationsテーブルへの参照 | basic_info_2025 |
+| project_name | text | ○ | null | プロジェクト名 | 1-200文字 | 基本情報 2025年春試験 |
+| target_date | timestamptz |  | null | 目標試験日 | タイムスタンプ型 | 2025-04-20T00:00:00Z |
+| status | text | ○ | 'active' | ステータス | active/pending/done | active |
+| progress_percentage | integer | ○ | 0 | 進捗率 | 0-100の整数 | 65 |
+| total_tasks | integer |  | 0 | 総タスク数 | 整数、紐づくTasksの合計数 | 25 |
+| completed_tasks | integer |  | 0 | 完了タスク数 | 整数、紐づく完了Tasksの合計数 | 16 |
+| total_estimated_hours | decimal |  | 0 | 総推定時間 | 数値、Tasksの合計時間 | 120 |
+| studied_hours | decimal | ○ | 0 | 学習済み時間 | 数値 | 80 |
+| created_at | timestamptz | ○ | now() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| updated_at | timestamptz | ○ | now() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
 
-#### 5.3.4 tasks コレクション
+#### 5.3.4 tasks テーブル
 | フィールド名 | データ型 | 必須 | デフォルト値 | 説明 | バリデーション | 例 |
 |---|---|---|---|---|---|---|
-| id | string | ○ | - | タスクID | 英数字、最大128文字 | task_001 |
-| userIId | string | ○ | - | 作成ユーザーID | usersコレクションへの参照 | user_001 |
-| projectId | string | ○ | - | プロジェクトID | projectsコレクションへの参照 | proj_user1_001 |
-| title | string | ○ | - | タスク名 | 1-200文字 | 基礎理論の学習 |
-| description | string |  | - | タスク詳細 | 最大2000文字 | カスタマイズした説明 |
-| estimatedHours | number | ○ | - | 推定学習時間 | 数値型 | 25 |
-| isCompleted | boolean | ○ | FALSE | 完了フラグ | true/false | FALSE |
-| isPublic | boolean | ○ | FALSE | 公開フラグ | isCompleted=trueの時のみtrue可能 |  |
-| completedAt | timestamp |  | null | 完了日時 | isPublic=trueの時必須 | 2025-01-15T10:30:00Z |
-| copyCount | number | ○ | 0 | コピー回数 | 0以上の整数 | 4 |
-| originalTaskId | string |  | null | 元タスクID | tasksコレクションへの参照（コピー時） | task_002 |
-| orderIndex | number | ○ | 0 | 表示順序 | 0以上の整数、同じプロジェクトの中で重複無し | 1 |
-| notes | string |  | null | メモ | 最大2000文字 | 難しかったが理解できた |
-| createdAt | timestamp | ○ | serverTimestamp() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
-| updatedAt | timestamp | ○ | serverTimestamp() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| id | uuid | ○ | gen_random_uuid() | タスクID | UUID形式 | task_001 |
+| user_id | uuid | ○ | - | 作成ユーザーID | usersテーブルへの参照 | user_001 |
+| project_id | uuid | ○ | - | プロジェクトID | projectsテーブルへの参照 | proj_user1_001 |
+| title | text | ○ | - | タスク名 | 1-200文字 | 基礎理論の学習 |
+| description | text |  | null | タスク詳細 | 最大2000文字 | カスタマイズした説明 |
+| estimated_hours | decimal | ○ | - | 推定学習時間 | 数値型 | 25 |
+| is_completed | boolean | ○ | false | 完了フラグ | true/false | false |
+| is_public | boolean | ○ | false | 公開フラグ | is_completed=trueの時のみtrue可能 | false |
+| completed_at | timestamptz |  | null | 完了日時 | is_public=trueの時必須 | 2025-01-15T10:30:00Z |
+| copy_count | integer | ○ | 0 | コピー回数 | 0以上の整数 | 4 |
+| original_task_id | uuid |  | null | 元タスクID | tasksテーブルへの参照（コピー時） | task_002 |
+| order_index | integer | ○ | 0 | 表示順序 | 0以上の整数、同じプロジェクトの中で重複無し | 1 |
+| notes | text |  | null | メモ | 最大2000文字 | 難しかったが理解できた |
+| created_at | timestamptz | ○ | now() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| updated_at | timestamptz | ○ | now() | 更新日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
 
-#### 5.3.5 activities コレクション（コミュニティ活動）
+#### 5.3.5 activities テーブル（コミュニティ活動）
 | フィールド名 | データ型 | 必須 | デフォルト値 | 説明 | バリデーション | 例 |
 |---|---|---|---|---|---|---|
-| id | string | ○ | - | アクティビティID | 英数字、最大128文字 | activity_001 |
-| userId | string | ○ | - | ユーザーID | usersコレクションへの参照 | abc123def456 |
-| projectId | string | ○ | - | プロジェクトID | projectsコレクションへの参照 | proj_user1_001 |
-| completedTaskTitle | string |  | null | 完了したタスク名 | 1-200文字 | 基礎理論の学習 |
-| message | string |  | null | メッセージ | 最大2000文字 | 基礎理論の学習完了！ |
-| likesCount | number | ○ | 0 | いいね数 | ひもづくlikesの合計数 | 3 |
-| createdAt | timestamp | ○ | serverTimestamp() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| id | uuid | ○ | gen_random_uuid() | アクティビティID | UUID形式 | activity_001 |
+| user_id | uuid | ○ | - | ユーザーID | usersテーブルへの参照 | abc123def456 |
+| project_id | uuid | ○ | - | プロジェクトID | projectsテーブルへの参照 | proj_user1_001 |
+| completed_task_title | text |  | null | 完了したタスク名 | 1-200文字 | 基礎理論の学習 |
+| message | text |  | null | メッセージ | 最大2000文字 | 基礎理論の学習完了！ |
+| likes_count | integer | ○ | 0 | いいね数 | ひもづくlikesの合計数 | 3 |
+| created_at | timestamptz | ○ | now() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
 
-#### 5.3.6 likes コレクション（一意の組み合わせのみ）
+#### 5.3.6 likes テーブル（一意の組み合わせのみ）
 | フィールド名 | データ型 | 必須 | デフォルト値 | 説明 | バリデーション | 例 |
 |---|---|---|---|---|---|---|
-| id | string | ○ | - | いいねID | 英数字、最大128文字 | like_001 |
-| userId | string | ○ | - | いいねしたユーザーID | usersコレクションへの参照 | user123 |
-| activityId | string | ○ | - | 対象アクティビティID | activitiesへの参照 | activity_001 |
-| createdAt | timestamp | ○ | serverTimestamp() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| id | uuid | ○ | gen_random_uuid() | いいねID | UUID形式 | like_001 |
+| user_id | uuid | ○ | - | いいねしたユーザーID | usersテーブルへの参照 | user123 |
+| activity_id | uuid | ○ | - | 対象アクティビティID | activitiesへの参照 | activity_001 |
+| created_at | timestamptz | ○ | now() | 作成日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
 
-#### 5.3.7 userFollows コレクション（自己フォロー防止、重複フォロー防止）
+#### 5.3.7 user_follows テーブル（自己フォロー防止、重複フォロー防止）
 | フィールド名 | データ型 | 必須 | デフォルト値 | 説明 | バリデーション | 例 |
 |---|---|---|---|---|---|---|
-| id | string | ○ | - | フォローID | 英数字、最大128文字 | follow_001 |
-| userId | string | ○ | - | フォローしたユーザーID | usersコレクションへの参照 | user123 |
-| followedUserId | string | ○ | - | フォローされたユーザーID | usersコレクションへの参照 | user456 |
-| createdAt | timestamp | ○ | serverTimestamp() | フォロー日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
+| id | uuid | ○ | gen_random_uuid() | フォローID | UUID形式 | follow_001 |
+| user_id | uuid | ○ | - | フォローしたユーザーID | usersテーブルへの参照 | user123 |
+| followed_user_id | uuid | ○ | - | フォローされたユーザーID | usersテーブルへの参照 | user456 |
+| created_at | timestamptz | ○ | now() | フォロー日時 | サーバータイムスタンプ | 2025-01-01T10:00:00Z |
 
 ### 5.4 画面設計
 
@@ -259,15 +259,3 @@
 
 
 
-## 6. その他、メモ
-- ヒアリング：友人U
-  - 資格勉強での課題点
-    - 教材の中の章をどの順番で、どのくらいの粒度でやれば良いかがわからない。先人がどのように進めたかわかると嬉しい
-    - その資格をとった人が他にとった資格などから、おすすめ資格を出してくれると嬉しい→ユーザーがこれまでに完了したプロジェクト-資格からレコメンデーションをできないか？
-  - 教材が決まっているから、タスクの粒度が大きくて、プロジェクトータスク1つ（教材1つ）みたいになると、嬉しくない→プロジェクト＞教材＞タスク、みたいな中オブジェクトが必要か？
-
-- 差別化要因
-  - 同じタスクリストでどれだけの人が成果を上げたかがわかると、信じてタスクを進められる
-  - 同じタスクリストに臨む人がいるとわかることでモチベーションの向上になる
-  - タスク管理xコミュニティ
-    

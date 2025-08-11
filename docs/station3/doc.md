@@ -8,19 +8,22 @@
     - コンポーネント設計により、ナビゲーションバーやタスクカードなど、UI 部品の再利用を実現
   - 開発効率
     - 1ヶ月を目標にするため、習得済みの技術を使用
-- バックエンド: Firebase (Firestore, Authentication, Hosting)
+- バックエンド: Supabase (PostgreSQL, Authentication, Storage)
   - リアルタイム機能
-    - コミュニティ活動の即座な反映、進捗共有
+    - PostgreSQLのリアルタイム機能によりコミュニティ活動の即座な反映、進捗共有
   - 認証システム
-    - Googleアカウントでの簡単ログイン
+    - Supabase AuthによるGoogleアカウントでの簡単ログイン
   - 開発速度
     - 一ヶ月の短期開発のため、サーバー構築の負担を軽減。フロントエンドの開発に集中
-- デプロイ: Firebase Hosting
+  - データベースの信頼性
+    - PostgreSQLによるACID準拠のトランザクション、強整合性
+- デプロイ: Vercel
   - セキュリティ面
-    - グローバル CDN を基盤としているため構想で安全な配信が可能
-  - SPA に適している
+    - エッジネットワークによる高速で安全な配信
+  - Next.js に最適化
+    - サーバーサイドレンダリングとスタティック生成のサポート
   - 運用効率
-    - 短期間の個人開発であることを踏まえ、簡単に公開できるため採用
+    - 短期間の個人開発であることを踏まえ、GitHub連携で簡単にデプロイ可能
 
 
 ## 2. 画面設計図
@@ -37,7 +40,7 @@ https://app.diagrams.net/?libs=general;flowchart#G1rjE7D1RYuYwux4Kf7qyqK_A4rItZW
 https://drive.google.com/file/d/1ediuQ4CZttmomDAEypwiYBCq4KHoprRd/view?usp=sharing
 
 v2
-userTasks コレクションと templateTasks コレクションを Tasks コレクションに統合→isPublic フラグで分ける
+user_tasks テーブルと template_tasks テーブルを tasks テーブルに統合→is_public フラグで分ける
 https://drive.google.com/file/d/1_DLjQ4gUMpe34P0cDDE052CE-XtC84kc/view?usp=sharing
 
 ## 6. API 仕様書
