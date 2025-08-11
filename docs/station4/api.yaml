@@ -1,0 +1,1024 @@
+openapi: 3.0.3
+info:
+  title: CertPath API
+  description: IT資格取得支援プラットフォーム CertPath のAPI仕様
+  version: 1.0.0
+  contact:
+    name: CertPath Development Team
+servers:
+  - url: https://api.certpath.com/v1
+    description: Production server
+  - url: https://staging-api.certpath.com/v1
+    description: Staging server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Googleアカウントでログイン
+      description: GoogleのIDトークンを使用してユーザー認証を行う
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - googleIdToken
+              properties:
+                googleIdToken:
+                  type: string
+                  description: GoogleのIDトークン
+      responses:
+        '200':
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+                      token:
+                        type: string
+                        description: JWTトークン
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: ユーザープロフィール取得
+      description: 現在ログイン中のユーザーのプロフィール情報を取得
+      responses:
+        '200':
+          description: プロフィール取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/UserProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      tags:
+        - Users
+      summary: ユーザープロフィール更新
+      description: ユーザーのプロフィール情報を更新
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayName:
+                  type: string
+                  description: 表示名
+                  minLength: 1
+                  maxLength: 50
+                targetCertification:
+                  type: string
+                  nullable: true
+                  description: 目標資格
+                  maxLength: 100
+                isProgressPublic:
+                  type: boolean
+                  description: 進捗公開設定
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "プロフィールを更新しました。"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /certifications:
+    get:
+      tags:
+        - Certifications
+      summary: 資格テンプレート一覧取得
+      description: 利用可能な資格テンプレートの一覧を取得
+      security: []
+      parameters:
+        - name: category
+          in: query
+          description: カテゴリーフィルター
+          schema:
+            type: string
+        - name: difficultyLevel
+          in: query
+          description: 難易度フィルター
+          schema:
+            type: string
+            enum: [初級, 中級, 上級]
+      responses:
+        '200':
+          description: 資格一覧取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CertificationSummary'
+
+  /certifications/{certificationId}:
+    get:
+      tags:
+        - Certifications
+      summary: 資格テンプレート詳細取得
+      description: 指定された資格の詳細情報とデフォルトタスクを取得
+      security: []
+      parameters:
+        - name: certificationId
+          in: path
+          required: true
+          description: 資格ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 資格詳細取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/CertificationDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /projects:
+    get:
+      tags:
+        - Projects
+      summary: ユーザーのプロジェクト一覧取得
+      description: ログイン中ユーザーのプロジェクト一覧を取得
+      responses:
+        '200':
+          description: プロジェクト一覧取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags:
+        - Projects
+      summary: プロジェクト作成
+      description: 資格テンプレートからプロジェクトを作成
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - certificationId
+              properties:
+                certificationId:
+                  type: string
+                  description: 資格ID
+                projectName:
+                  type: string
+                  description: プロジェクト名（未指定時は資格名をデフォルト使用）
+                  minLength: 1
+                  maxLength: 100
+                targetDate:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: 目標試験日（ISO8601形式）
+      responses:
+        '201':
+          description: プロジェクト作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ProjectCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /projects/{projectId}:
+    get:
+      tags:
+        - Projects
+      summary: プロジェクト詳細取得
+      description: プロジェクトの詳細情報とタスク一覧を取得
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          description: プロジェクトID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: プロジェクト詳細取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ProjectDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /projects/{projectId}/tasks:
+    post:
+      tags:
+        - Tasks
+      summary: タスク作成
+      description: プロジェクトに新しいタスクを追加
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          description: プロジェクトID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - estimatedHours
+              properties:
+                title:
+                  type: string
+                  description: タスク名
+                  minLength: 1
+                  maxLength: 200
+                description:
+                  type: string
+                  description: タスク詳細
+                  maxLength: 2000
+                estimatedHours:
+                  type: number
+                  description: 推定学習時間
+                  minimum: 0.5
+                  maximum: 999.5
+                orderIndex:
+                  type: integer
+                  description: 表示順序（未指定時は最後に追加）
+      responses:
+        '201':
+          description: タスク作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/TaskCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /tasks/{taskId}:
+    put:
+      tags:
+        - Tasks
+      summary: タスク更新
+      description: タスクの情報を更新
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          description: タスクID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                description:
+                  type: string
+                  maxLength: 2000
+                estimatedHours:
+                  type: number
+                  minimum: 0.5
+                  maximum: 999.5
+                isCompleted:
+                  type: boolean
+                notes:
+                  type: string
+                  maxLength: 2000
+      responses:
+        '200':
+          description: タスク更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /tasks/{taskId}/complete:
+    put:
+      tags:
+        - Tasks
+      summary: タスク完了
+      description: タスクを完了状態にし、プロジェクトの進捗を更新
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          description: タスクID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isPublic:
+                  type: boolean
+                  default: false
+                  description: 完了を公開するか
+      responses:
+        '200':
+          description: タスク完了成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "タスクを完了しました。"
+                      projectProgress:
+                        $ref: '#/components/schemas/ProjectProgress'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /community/users/{certificationId}:
+    get:
+      tags:
+        - Community
+      summary: 同じ資格を目指すユーザー一覧
+      description: 指定された資格を目指している他のユーザーの一覧を取得
+      parameters:
+        - name: certificationId
+          in: path
+          required: true
+          description: 資格ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ユーザー一覧取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CommunityUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /community/activities:
+    get:
+      tags:
+        - Community
+      summary: アクティビティフィード取得
+      description: コミュニティのアクティビティフィードを取得
+      parameters:
+        - name: limit
+          in: query
+          description: 取得件数
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: オフセット
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: アクティビティフィード取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /community/activities/{activityId}/like:
+    post:
+      tags:
+        - Community
+      summary: アクティビティにいいね
+      description: 指定されたアクティビティにいいねを送信
+      parameters:
+        - name: activityId
+          in: path
+          required: true
+          description: アクティビティID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: いいね送信成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      isLiked:
+                        type: boolean
+                        example: true
+                      likesCount:
+                        type: integer
+                        example: 4
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    delete:
+      tags:
+        - Community
+      summary: いいねを取り消し
+      description: 指定されたアクティビティのいいねを取り消し
+      parameters:
+        - name: activityId
+          in: path
+          required: true
+          description: アクティビティID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: いいね取り消し成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      isLiked:
+                        type: boolean
+                        example: false
+                      likesCount:
+                        type: integer
+                        example: 3
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        uid:
+          type: string
+          description: ユーザーID
+        displayName:
+          type: string
+          description: 表示名
+        email:
+          type: string
+          format: email
+          description: メールアドレス
+        profileImage:
+          type: string
+          nullable: true
+          description: プロフィール画像URL
+        isProgressPublic:
+          type: boolean
+          description: 進捗公開設定
+
+    UserProfile:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            targetCertification:
+              type: string
+              nullable: true
+              description: 目標資格
+            startDate:
+              type: string
+              format: date-time
+              nullable: true
+              description: 学習開始日
+            createdAt:
+              type: string
+              format: date-time
+              description: 作成日時
+            updatedAt:
+              type: string
+              format: date-time
+              description: 更新日時
+
+    CertificationSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 資格ID
+        name:
+          type: string
+          description: 資格名
+        description:
+          type: string
+          description: 資格説明
+        category:
+          type: string
+          description: カテゴリ
+        estimatedPeriod:
+          type: integer
+          description: 推定学習期間（日）
+        difficultyLevel:
+          type: string
+          description: 難易度
+          enum: [初級, 中級, 上級]
+        passingScore:
+          type: integer
+          nullable: true
+          description: 合格点
+        examFee:
+          type: integer
+          nullable: true
+          description: 受験料（円）
+
+    CertificationDetail:
+      allOf:
+        - $ref: '#/components/schemas/CertificationSummary'
+        - type: object
+          properties:
+            officialUrl:
+              type: string
+              nullable: true
+              description: 公式サイトURL
+            defaultTasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/DefaultTask'
+
+    DefaultTask:
+      type: object
+      properties:
+        title:
+          type: string
+          description: タスク名
+        description:
+          type: string
+          description: タスク詳細
+        estimatedHours:
+          type: number
+          description: 推定学習時間
+        orderIndex:
+          type: integer
+          description: 表示順序
+
+    ProjectSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: プロジェクトID
+        projectName:
+          type: string
+          description: プロジェクト名
+        certification:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        targetDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: 目標試験日
+        status:
+          type: string
+          enum: [active, pending, done]
+          description: ステータス
+        progressPercentage:
+          type: integer
+          description: 進捗率
+        totalTasks:
+          type: integer
+          description: 総タスク数
+        completedTasks:
+          type: integer
+          description: 完了タスク数
+        studiedHours:
+          type: number
+          description: 学習済み時間
+
+    ProjectCreated:
+      type: object
+      properties:
+        id:
+          type: string
+          description: プロジェクトID
+        projectName:
+          type: string
+          description: プロジェクト名
+        certificationId:
+          type: string
+          description: 資格ID
+        targetDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: 目標試験日
+        status:
+          type: string
+          example: "active"
+        progressPercentage:
+          type: integer
+          example: 0
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日時
+
+    ProjectDetail:
+      allOf:
+        - $ref: '#/components/schemas/ProjectSummary'
+        - type: object
+          properties:
+            certification:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+            totalEstimatedHours:
+              type: number
+              description: 総推定時間
+            tasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          description: タスクID
+        title:
+          type: string
+          description: タスク名
+        description:
+          type: string
+          description: タスク詳細
+        estimatedHours:
+          type: number
+          description: 推定学習時間
+        isCompleted:
+          type: boolean
+          description: 完了フラグ
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: 完了日時
+        orderIndex:
+          type: integer
+          description: 表示順序
+        notes:
+          type: string
+          nullable: true
+          description: メモ
+
+    TaskCreated:
+      type: object
+      properties:
+        id:
+          type: string
+          description: タスクID
+        title:
+          type: string
+          description: タスク名
+        description:
+          type: string
+          description: タスク詳細
+        estimatedHours:
+          type: number
+          description: 推定学習時間
+        isCompleted:
+          type: boolean
+          example: false
+        orderIndex:
+          type: integer
+          description: 表示順序
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日時
+
+    ProjectProgress:
+      type: object
+      properties:
+        progressPercentage:
+          type: integer
+          description: 進捗率
+        completedTasks:
+          type: integer
+          description: 完了タスク数
+        totalTasks:
+          type: integer
+          description: 総タスク数
+
+    CommunityUser:
+      type: object
+      properties:
+        uid:
+          type: string
+          description: ユーザーID
+        displayName:
+          type: string
+          description: 表示名
+        profileImage:
+          type: string
+          nullable: true
+          description: プロフィール画像URL
+        progressPercentage:
+          type: integer
+          description: 進捗率
+        studiedHours:
+          type: number
+          description: 学習済み時間
+        isFollowing:
+          type: boolean
+          description: フォロー状態
+
+    Activity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: アクティビティID
+        user:
+          type: object
+          properties:
+            uid:
+              type: string
+            displayName:
+              type: string
+            profileImage:
+              type: string
+              nullable: true
+        project:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            certification:
+              type: object
+              properties:
+                name:
+                  type: string
+        completedTaskTitle:
+          type: string
+          nullable: true
+          description: 完了したタスク名
+        message:
+          type: string
+          nullable: true
+          description: メッセージ
+        likesCount:
+          type: integer
+          description: いいね数
+        isLiked:
+          type: boolean
+          description: ユーザーがいいね済みか
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日時
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: エラーコード
+            message:
+              type: string
+              description: エラーメッセージ
+
+  responses:
+    BadRequest:
+      description: リクエスト形式エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: "VALID001"
+              message: "表示名は必須項目です。"
+
+    Unauthorized:
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: "AUTH001"
+              message: "ログインに失敗しました。再度お試しください。"
+
+    Forbidden:
+      description: 権限エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: "AUTH003"
+              message: "アクセス権限がありません。"
+
+    NotFound:
+      description: リソースが見つからない
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: "DATA004"
+              message: "指定されたデータが見つかりません。"
+
+tags:
+  - name: Authentication
+    description: 認証関連API
+  - name: Users
+    description: ユーザー管理API
+  - name: Certifications
+    description: 資格テンプレートAPI
+  - name: Projects
+    description: プロジェクト管理API
+  - name: Tasks
+    description: タスク管理API
+  - name: Community
+    description: コミュニティAPI
