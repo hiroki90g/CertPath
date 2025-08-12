@@ -1,56 +1,91 @@
+import Link from 'next/link'
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          CertPath - IT資格学習支援プラットフォーム
-        </p>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <h1 className="text-4xl font-bold text-center">
-          IT資格取得を<br />
-          効率的にサポート
-        </h1>
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            タスク設計の効率化
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            2-3分で学習計画を立てられる
+    <div className="container mx-auto px-4 py-16">
+      {/* Hero Section */}
+      <section className="text-center space-y-6 pb-16">
+        <div className="space-y-4">
+          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+            IT資格取得を
+            <br />
+            <span className="text-primary">効率的にサポート</span>
+          </h1>
+          <p className="mx-auto max-w-[700px] text-gray-500 text-xl">
+            タスク設計の効率化からコミュニティ支援まで。
+            2-3分で学習計画を立て、仲間と一緒にモチベーションを維持しながら資格取得を目指しましょう。
           </p>
         </div>
-
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            実証済み学習パス
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            先人の成功事例をベースにした信頼性の高いタスクリスト
-          </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button size="lg" asChild>
+            <Link href="/certifications">資格を選択して始める</Link>
+          </Button>
+          <Button variant="outline" size="lg" asChild>
+            <Link href="/login">ログインして続きから</Link>
+          </Button>
         </div>
+      </section>
 
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            コミュニティ支援
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            同じ資格を目指す仲間との進捗共有
-          </p>
-        </div>
+      {/* Features Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-16">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">タスク設計の効率化</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>
+              2-3分で学習計画を立てられる効率的なタスク管理システム
+            </CardDescription>
+          </CardContent>
+        </Card>
 
-        <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className="mb-3 text-2xl font-semibold">
-            継続支援
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            孤独感の解消と相互励まし機能
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">実証済み学習パス</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>
+              先人の成功事例をベースにした信頼性の高いタスクリスト
+            </CardDescription>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">コミュニティ支援</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>
+              同じ資格を目指す仲間との進捗共有とリアルタイム更新
+            </CardDescription>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">継続支援</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>
+              孤独感の解消と相互励まし機能でモチベーションを維持
+            </CardDescription>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* CTA Section */}
+      <section className="text-center py-16 bg-muted rounded-lg">
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold">今すぐ始めてみませんか？</h2>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            無料でアカウントを作成して、効率的な資格学習を体験してください
           </p>
+          <Button size="lg" asChild>
+            <Link href="/signup">無料で始める</Link>
+          </Button>
         </div>
-      </div>
-    </main>
+      </section>
+    </div>
   )
 }
