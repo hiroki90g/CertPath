@@ -104,4 +104,4 @@ docs/
 - 運用保守の簡素化
 
 ## ブランチの扱い
-main -> dev -> dev-init -> ここから topic-branch を切る、基本的にdev-init にマージ
+main -> dev -> ここから topic-branch を切る、基本的にdev にマージ
