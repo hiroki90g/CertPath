@@ -1,68 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
+import { useProjects } from '@/hooks/useProjects'
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Progress } from '@/components/ui'
-
-interface Project {
-  id: string
-  project_name: string
-  target_date: string | null
-  status: string
-  progress_percentage: number
-  studied_hours: number
-  created_at: string
-  certification: {
-    name: string
-    category: string
-    difficulty_level: string
-  }
-}
 
 export default function ProjectsPage() {
   const router = useRouter()
   const { user } = useAuth()
-  
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    fetchProjects()
-  }, [user, router])
-
-  const fetchProjects = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select(`
-          *,
-          certification:certifications(
-            name,
-            category,
-            difficulty_level
-          )
-        `)
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-
-      setProjects(data || [])
-    } catch (err: any) {
-      console.error('プロジェクト一覧の取得に失敗:', err)
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { projects, loading, error, refetch } = useProjects()
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -101,13 +47,17 @@ export default function ProjectsPage() {
     )
   }
 
+  if (!user) {
+    return null
+  }
+
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">エラーが発生しました</h1>
           <p className="text-red-600 mb-4">{error}</p>
-          <Button onClick={() => window.location.reload()}>
+          <Button onClick={refetch}>
             再読み込み
           </Button>
         </div>

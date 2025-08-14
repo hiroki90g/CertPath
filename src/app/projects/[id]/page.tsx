@@ -3,25 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
-import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Progress } from '@/components/ui'
-
-interface Project {
-  id: string
-  project_name: string
-  target_date: string | null
-  status: string
-  progress_percentage: number
-  studied_hours: number
-  created_at: string
-  certification: {
-    name: string
-    description: string
-    category: string
-    difficulty_level: string
-    estimated_period: number
-  }
-}
+import { useProjects } from '@/hooks/useProjects'
+import { useTasks } from '@/hooks/useTasks'
+import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Progress, Input } from '@/components/ui'
 
 export default function ProjectDetailPage() {
   const params = useParams()
@@ -29,9 +13,18 @@ export default function ProjectDetailPage() {
   const { user } = useAuth()
   const projectId = params.id as string
 
-  const [project, setProject] = useState<Project | null>(null)
+  const { fetchProject, updateProjectProgress } = useProjects()
+  const { tasks, createTask, updateTask, deleteTask, toggleTaskCompletion, loading: tasksLoading } = useTasks(projectId)
+  
+  const [project, setProject] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showTaskForm, setShowTaskForm] = useState(false)
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    estimated_hours: 1
+  })
 
   useEffect(() => {
     if (!user) {
@@ -39,35 +32,73 @@ export default function ProjectDetailPage() {
       return
     }
 
-    fetchProject()
+    loadProject()
   }, [user, projectId, router])
 
-  const fetchProject = async () => {
+  const loadProject = async () => {
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select(`
-          *,
-          certification:certifications(
-            name,
-            description,
-            category,
-            difficulty_level,
-            estimated_period
-          )
-        `)
-        .eq('id', projectId)
-        .eq('user_id', user?.id)
-        .single()
-
-      if (error) throw error
-
+      setLoading(true)
+      const data = await fetchProject(projectId)
+      if (!data) {
+        setError('プロジェクトが見つかりません')
+        return
+      }
       setProject(data)
     } catch (err: any) {
       console.error('プロジェクト情報の取得に失敗:', err)
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCreateTask = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!newTask.title.trim()) return
+
+    try {
+      await createTask({
+        project_id: projectId,
+        title: newTask.title,
+        description: newTask.description || null,
+        estimated_hours: newTask.estimated_hours
+      })
+      
+      setNewTask({ title: '', description: '', estimated_hours: 1 })
+      setShowTaskForm(false)
+      
+      // 進捗率を更新
+      await updateProjectProgress(projectId)
+      await loadProject() // プロジェクト情報を再読み込み
+    } catch (err: any) {
+      alert(`タスクの作成に失敗しました: ${err.message}`)
+    }
+  }
+
+  const handleToggleTask = async (taskId: string) => {
+    try {
+      await toggleTaskCompletion(taskId)
+      
+      // 進捗率を更新
+      await updateProjectProgress(projectId)
+      await loadProject() // プロジェクト情報を再読み込み
+    } catch (err: any) {
+      alert(`タスクの更新に失敗しました: ${err.message}`)
+    }
+  }
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm('このタスクを削除しますか？')) return
+    
+    try {
+      await deleteTask(taskId)
+      
+      // 進捗率を更新
+      await updateProjectProgress(projectId)
+      await loadProject() // プロジェクト情報を再読み込み
+    } catch (err: any) {
+      alert(`タスクの削除に失敗しました: ${err.message}`)
     }
   }
 
@@ -123,6 +154,12 @@ export default function ProjectDetailPage() {
   }
 
   const daysUntilTarget = getDaysUntilTarget(project.target_date)
+  
+  // リアルタイムのタスク統計計算
+  const totalTasks = tasks.length
+  const completedTasks = tasks.filter(task => task.is_completed).length
+  const realTimeProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+  const totalEstimatedHours = tasks.reduce((sum, task) => sum + task.estimated_hours, 0)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -152,13 +189,13 @@ export default function ProjectDetailPage() {
           <CardContent>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <h3 className="font-medium">{project.certification.name}</h3>
-                <Badge variant="outline">{project.certification.difficulty_level}</Badge>
+                <h3 className="font-medium">{project.certification?.name || '資格情報なし'}</h3>
+                <Badge variant="outline">{project.certification?.difficulty_level || '-'}</Badge>
               </div>
-              <p className="text-sm text-muted-foreground">{project.certification.description}</p>
+              <p className="text-sm text-muted-foreground">{project.certification?.description || ''}</p>
               <div className="flex gap-4 text-sm">
-                <span>カテゴリ: {project.certification.category}</span>
-                <span>推定期間: {project.certification.estimated_period}日</span>
+                <span>カテゴリ: {project.certification?.category || '-'}</span>
+                <span>推定期間: {project.certification?.estimated_period || 0}日</span>
               </div>
             </div>
           </CardContent>
@@ -174,9 +211,12 @@ export default function ProjectDetailPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>進捗率</span>
-                  <span>{project.progress_percentage}%</span>
+                  <span>{realTimeProgress}%</span>
                 </div>
-                <Progress value={project.progress_percentage} className="w-full" />
+                <Progress value={realTimeProgress} className="w-full" />
+                <div className="text-xs text-muted-foreground">
+                  {completedTasks} / {totalTasks} タスク完了
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -188,6 +228,9 @@ export default function ProjectDetailPage() {
             <CardContent>
               <div className="text-2xl font-bold">{project.studied_hours}時間</div>
               <p className="text-sm text-muted-foreground">累計学習時間</p>
+              <div className="text-xs text-muted-foreground mt-1">
+                予想総時間: {totalEstimatedHours}時間
+              </div>
             </CardContent>
           </Card>
 
@@ -208,16 +251,118 @@ export default function ProjectDetailPage() {
           </Card>
         </div>
 
-        {/* タスク一覧エリア（今後実装） */}
+        {/* タスク一覧 */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">タスク一覧</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">タスク一覧</CardTitle>
+              <Button onClick={() => setShowTaskForm(true)}>
+                タスクを追加
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <p>タスクがまだありません</p>
-              <Button className="mt-4">最初のタスクを作成</Button>
-            </div>
+            {/* タスク作成フォーム */}
+            {showTaskForm && (
+              <Card className="mb-4">
+                <CardContent className="pt-4">
+                  <form onSubmit={handleCreateTask} className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium">タスク名 *</label>
+                      <Input
+                        value={newTask.title}
+                        onChange={(e) => setNewTask(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="例: 基本知識の復習"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">説明</label>
+                      <Input
+                        value={newTask.description}
+                        onChange={(e) => setNewTask(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="タスクの詳細説明（任意）"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">予想時間（時間）</label>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={newTask.estimated_hours}
+                        onChange={(e) => setNewTask(prev => ({ ...prev, estimated_hours: parseInt(e.target.value) || 1 }))}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button type="submit">作成</Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setShowTaskForm(false)}
+                      >
+                        キャンセル
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* タスクリスト */}
+            {tasksLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mx-auto"></div>
+              </div>
+            ) : tasks.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>タスクがまだありません</p>
+                <p className="text-sm mt-2">「タスクを追加」ボタンから最初のタスクを作成しましょう</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {tasks.map((task) => (
+                  <Card key={task.id} className={`${task.is_completed ? 'bg-gray-50' : ''}`}>
+                    <CardContent className="py-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <input
+                            type="checkbox"
+                            checked={task.is_completed}
+                            onChange={() => handleToggleTask(task.id)}
+                            className="w-4 h-4"
+                          />
+                          <div className="flex-1">
+                            <h4 className={`font-medium ${task.is_completed ? 'line-through text-gray-500' : ''}`}>
+                              {task.title}
+                            </h4>
+                            {task.description && (
+                              <p className={`text-sm ${task.is_completed ? 'text-gray-400' : 'text-muted-foreground'}`}>
+                                {task.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                              <span>{task.estimated_hours}時間</span>
+                              {task.is_completed && task.completed_at && (
+                                <span>完了: {formatDate(task.completed_at)}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteTask(task.id)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          削除
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
