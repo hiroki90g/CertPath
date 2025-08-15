@@ -48,6 +48,12 @@ export function Header() {
               >
                 コミュニティ
               </Link>
+              <Link
+                href="/profile"
+                className="transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                プロファイル
+              </Link>
             </nav>
           )}
         </div>
