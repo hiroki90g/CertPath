@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { useProjects } from '@/hooks/useProjects'
 import { supabase } from '@/lib/supabase'
 import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@/components/ui'
 
@@ -18,23 +19,33 @@ interface Certification {
 export default function CreateProjectPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+  const { createProject } = useProjects()
   const certificationId = searchParams.get('certification')
 
   const [certification, setCertification] = useState<Certification | null>(null)
   const [projectName, setProjectName] = useState('')
   const [targetDate, setTargetDate] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [pageLoading, setPageLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    console.log('User state:', user)
+    console.log('Certification ID:', certificationId)
+    
+    if (loading) {
+      console.log('user loading...')
+      return
+    }
     if (!user) {
+      console.log('No user, redirecting to login')
       router.push('/login')
       return
     }
 
     if (!certificationId) {
+      console.log('No certification ID, redirecting to certifications')
       router.push('/certifications')
       return
     }
@@ -64,7 +75,7 @@ export default function CreateProjectPage() {
       console.error('資格情報の取得に失敗:', err)
       setError(err.message)
     } finally {
-      setLoading(false)
+      setPageLoading(false)
     }
   }
 
@@ -77,25 +88,19 @@ export default function CreateProjectPage() {
     setError(null)
 
     try {
-      // プロジェクトを作成
-      const { data: project, error: projectError } = await supabase
-        .from('projects')
-        .insert({
-          user_id: user.id,
-          certification_id: certification.id,
-          project_name: projectName.trim(),
-          target_date: targetDate ? new Date(targetDate).toISOString() : null,
-          status: 'active',
-          progress_percentage: 0,
-          studied_hours: 0
-        })
-        .select()
-        .single()
+      // useProjectsフックを使ってプロジェクトを作成
+      const project = await createProject({
+        certification_id: certification.id,
+        project_name: projectName.trim(),
+        target_date: targetDate || null
+      })
 
-      if (projectError) throw projectError
-
-      // プロジェクト詳細ページにリダイレクト
-      router.push(`/projects/${project.id}`)
+      // デバッグ用ログ
+      console.log('Created project:', project)
+      console.log('Project ID:', project.id)
+      
+      // 一時的にプロジェクト一覧ページにリダイレクト
+      router.push('/projects')
     } catch (err: any) {
       console.error('プロジェクト作成に失敗:', err)
       setError(err.message)
@@ -108,7 +113,7 @@ export default function CreateProjectPage() {
     return null // useEffectでリダイレクトされる
   }
 
-  if (loading) {
+  if (pageLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">

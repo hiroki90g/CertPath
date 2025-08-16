@@ -124,17 +124,25 @@ export const useProjects = () => {
     if (!user) throw new Error('ログインが必要です')
 
     try {
+      // デバッグ用ログ
+      console.log('Creating project with user.id:', user.id)
+      console.log('Certification ID:', data.certification_id)
+      
+      const insertData = {
+        user_id: user.id,
+        certification_id: data.certification_id,
+        project_name: data.project_name.trim(),
+        target_date: data.target_date ? new Date(data.target_date).toISOString() : null,
+        status: 'active',
+        progress_percentage: 0,
+        studied_hours: 0
+      }
+      
+      console.log('Insert data:', insertData)
+
       const { data: project, error } = await supabase
         .from('projects')
-        .insert({
-          user_id: user.id,
-          certification_id: data.certification_id,
-          project_name: data.project_name.trim(),
-          target_date: data.target_date ? new Date(data.target_date).toISOString() : null,
-          status: 'active',
-          progress_percentage: 0,
-          studied_hours: 0
-        })
+        .insert(insertData)
         .select(`
           *,
           certification:certifications(

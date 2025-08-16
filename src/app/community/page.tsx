@@ -1,41 +1,32 @@
+'use client'
+
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Button, Badge, Progress } from '@/components/ui'
+import { useActivities } from '@/hooks/useActivities'
+import { useProjects } from '@/hooks/useProjects'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function CommunityPage() {
-  const activities = [
-    {
-      id: 1,
-      userId: 'user123',
-      username: 'りょう',
-      certification: '基本情報技術者試験',
-      taskTitle: 'アルゴリズムとプログラミングの学習',
-      message: 'ソートアルゴリズムの理解が深まりました！',
-      progressPercentage: 72,
-      likesCount: 3,
-      createdAt: '2025-01-15T10:30:00Z',
-    },
-    {
-      id: 2,
-      userId: 'user456',
-      username: 'あかり',
-      certification: 'ITパスポート',
-      taskTitle: null,
-      message: '今日から学習開始！みなさんよろしくお願いします🔥',
-      progressPercentage: 5,
-      likesCount: 8,
-      createdAt: '2025-01-15T09:15:00Z',
-    },
-    {
-      id: 3,
-      userId: 'user789',
-      username: 'けんた',
-      certification: '応用情報技術者試験',
-      taskTitle: 'データベース設計の学習',
-      message: '正規化の概念がやっと理解できました。次はSQL実践です！',
-      progressPercentage: 45,
-      likesCount: 5,
-      createdAt: '2025-01-15T08:45:00Z',
-    },
-  ]
+  const { user} = useAuth()
+  const { activities, loading, error, createActivity, toggleLike } = useActivities()
+  const [showForm, setShowForm] = useState(false)
+  const [formData, setFormData] = useState({
+    project_id: '',
+    completed_task_title: '',
+    message: ''
+  })
+  const { projects } = useProjects()
+
+  if (!user) {
+    return <div>ログインしてください</div>
+  }
+
+  if (loading) {
+    return <div className="container mx-auto px-4 py-8">読み込み中...</div> 
+  }
+  if ( error ) {
+    return <div className="container mx-auto px-4 py-8">エラーが発生しました: {error}</div>
+  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -53,6 +44,39 @@ export default function CommunityPage() {
     }
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!formData.project_id) {
+      alert('プロジェクトを選択してください')
+      return
+    }
+
+    try {
+      await createActivity({
+          user_id: user.id,
+          project_id: formData.project_id,
+          completed_task_title: formData.completed_task_title || null,
+          message: formData.message || null
+      })
+
+      setFormData({ project_id: '', completed_task_title: '', message: '' })
+      setShowForm(false)
+      alert('活動を投稿しました')
+    }catch (error: any) {
+      console.error('活動の投稿に失敗:', error)
+      alert('活動の投稿に失敗しました: ' + error.message)
+    }
+  }
+
+  const handleLike = async (activityId: string) => {
+    try {
+      await toggleLike(activityId)
+    } catch (error: any) {
+      console.error('いいね処理に失敗:', error)
+      alert('いいね処理に失敗しました: ' + error.message)
+    }
+  }
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="space-y-6">
@@ -64,54 +88,132 @@ export default function CommunityPage() {
         </div>
 
         {/* アクティビティフィード */}
-        <div className="space-y-4">
+        <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">最新のアクティビティ</h2>
-          
-          {activities.map((activity) => (
-            <Card key={activity.id}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
-                      {activity.username.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-medium">{activity.username}</p>
-                      <p className="text-sm text-muted-foreground">{formatDate(activity.createdAt)}</p>
-                    </div>
-                  </div>
-                  <Badge variant="outline">{activity.certification}</Badge>
-                </div>
+          <Button onClick={() => setShowForm(true)}>
+            活動を投稿
+          </Button>
+          {/* 投稿フォーム */}
+          {showForm && (
+            <Card className="mb-4">
+              <CardHeader>
+                <CardTitle>活動を投稿</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {activity.taskTitle && (
-                  <div className="bg-muted p-3 rounded-lg">
-                    <p className="text-sm font-medium text-muted-foreground">完了したタスク</p>
-                    <p className="text-sm">{activity.taskTitle}</p>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">プロジェクト</label>
+                    <select 
+                      value={formData.project_id} 
+                      onChange={(e) => setFormData(prev => ({...prev, project_id: e.target.value}))}
+                      required
+                      className="w-full mt-1 p-2 border rounded"
+                    >
+                      <option value="">プロジェクトを選択</option>
+                      {projects.map(project => (
+                        <option key={project.id} value={project.id}> 
+                          {project.project_name}
+                        </option>
+                      ))}
+                    </select> 
                   </div>
-                )}
-                
-                <p>{activity.message}</p>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>現在の進捗</span>
-                    <span className="font-medium">{activity.progressPercentage}%</span>
+                  <div>
+                    <label className="text-sm font-medium">完了したタスク（任意）</label>
+                    <input 
+                      type="text" 
+                      value={formData.completed_task_title} 
+                      onChange={(e) => setFormData(prev => ({...prev, completed_task_title: e.target.value}))}
+                      className="w-full mt-1 p-2 border rounded"
+                    />
                   </div>
-                  <Progress value={activity.progressPercentage} className="h-2" />
-                </div>
-
-                <div className="flex items-center justify-between pt-2">
-                  <Button variant="ghost" size="sm">
-                    👍 いいね {activity.likesCount > 0 && `(${activity.likesCount})`}
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    応援メッセージを送る
-                  </Button>
-                </div>
+                  <div>
+                    <label className="text-sm font-medium">メッセージ（任意）</label>
+                    <textarea 
+                      value={formData.message} 
+                      onChange={(e) => setFormData(prev => ({...prev, message: e.target.value}))}
+                      placeholder="今日の学習について書いてみましょう"
+                      className="w-full mt-1 p-2 border rounded"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Button type="submit" className="w-full">
+                      投稿する
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={() => setShowForm(false)}
+                    >
+                      キャンセル
+                    </Button>
+                  </div>
+                </form>
               </CardContent>
             </Card>
-          ))}
+          )}
+           {activities.length === 0 ? (
+                <div className="text-center py-8">
+                  <p>まだ活動がありません</p>
+                </div>
+            ) : (
+            <div>
+              {activities.map((activity) => (
+                <Card key={activity.id}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
+                          {activity.user?.profile_image ? (
+                            <img 
+                              src={activity.user.profile_image} 
+                              alt="avatar" 
+                              className="w-8 h-8 rounded-full"
+                            />
+                          ) : (
+                            activity.user?.display_name?.charAt(0) || '?'
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium">{activity.user?.display_name || '名前なし'}</p>
+                          <p className="text-sm text-muted-foreground">{formatDate(activity.created_at)}</p>
+                        </div>
+                      </div>
+                      <Badge variant="outline">{activity.project?.project_name}</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {activity.completed_task_title && (
+                      <div className="bg-muted p-3 rounded-lg">
+                        <p className="text-sm font-medium text-muted-foreground">完了したタスク</p>
+                        <p className="text-sm">{activity.completed_task_title}</p>
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>メッセージ</span>
+                        <span className="font-medium">{activity.message}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleLike(activity.id)}
+                        className={activity.is_liked ? 'text-blue-600' : ''}
+                      >
+                        {activity.is_liked ? '👍' : '🤍'} いいね {activity.likes_count > 0 && `(${activity.likes_count})`}
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        応援メッセージを送る
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>              
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 同じ資格挑戦者 */}

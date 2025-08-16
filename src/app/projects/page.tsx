@@ -111,13 +111,13 @@ export default function ProjectsPage() {
                       {getStatusBadge(project.status)}
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium">{project.certification.name}</p>
+                      <p className="text-sm font-medium">{project.certification?.name}</p>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="text-xs">
-                          {project.certification.difficulty_level}
+                          {project.certification?.difficulty_level}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
-                          {project.certification.category}
+                          {project.certification?.category}
                         </span>
                       </div>
                     </div>

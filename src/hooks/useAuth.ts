@@ -5,7 +5,8 @@ import { supabase } from '@/lib/supabase'
 import type { User } from '@supabase/supabase-js'
 
 export interface AuthUser {
-  id: string
+  id: string // usersテーブルのid
+  authId: string // Supabase AuthのID
   email: string
   displayName: string
   avatarUrl?: string
@@ -19,7 +20,12 @@ export function useAuth() {
     // 初期認証状態を取得
     const getInitialAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      setUser(user ? mapUser(user) : null)
+      if (user) {
+        const mappedUser = await mapUser(user)
+        setUser(mappedUser)
+      } else {
+        setUser(null)
+      }
       setLoading(false)
     }
 
@@ -31,7 +37,8 @@ export function useAuth() {
         console.log('Auth state changed:', event)
         
         if (session?.user) {
-          setUser(mapUser(session.user))
+          const mappedUser = await mapUser(session.user)
+          setUser(mappedUser)
         } else {
           setUser(null)
         }
@@ -70,9 +77,21 @@ export function useAuth() {
   }
 }
 
-function mapUser(user: User): AuthUser {
+async function mapUser(user: User): Promise<AuthUser> {
+  // usersテーブルからユーザー情報を取得
+  const { data: userData, error } = await supabase
+    .from('users')
+    .select('id')
+    .eq('auth_user_id', user.id)
+    .single()
+
+  if (error || !userData) {
+    throw new Error('ユーザー情報が見つかりません')
+  }
+
   return {
-    id: user.id,
+    id: userData.id, // usersテーブルのid
+    authId: user.id, // Supabase AuthのID
     email: user.email!,
     displayName: user.user_metadata?.full_name || user.email!.split('@')[0],
     avatarUrl: user.user_metadata?.avatar_url,

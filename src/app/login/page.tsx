@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle } = useAuthContext()
+  const { user, loading, signInWithGoogle } = useAuth()
   const [isSigningIn, setIsSigningIn] = useState(false)
   const router = useRouter()
 
