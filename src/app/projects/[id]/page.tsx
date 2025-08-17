@@ -10,7 +10,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Progress, Inpu
 export default function ProjectDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, loading: userLoading } = useAuth()
   const projectId = params.id as string
 
   const { fetchProject, updateProjectProgress } = useProjects()
@@ -27,13 +27,20 @@ export default function ProjectDetailPage() {
   })
 
   useEffect(() => {
+    // まだユーザー状態をロード中の場合は待つ
+    if (userLoading) {
+      console.log('User loading:', userLoading, 'User:', user)
+      return
+    }
+    
     if (!user) {
+      console.log('No user, redirecting to login')
       router.push('/login')
       return
     }
 
     loadProject()
-  }, [user, projectId, router])
+  }, [user, userLoading, projectId, router])
 
   const loadProject = async () => {
     try {
@@ -71,6 +78,7 @@ export default function ProjectDetailPage() {
       // 進捗率を更新
       await updateProjectProgress(projectId)
       await loadProject() // プロジェクト情報を再読み込み
+      alert(`タスクを作成しました`)
     } catch (err: any) {
       alert(`タスクの作成に失敗しました: ${err.message}`)
     }
@@ -125,6 +133,17 @@ export default function ProjectDetailPage() {
     return diffDays
   }
 
+  // ユーザー状態のロード中
+  if (userLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+        </div>
+      </div>
+    )
+  }
+
   if (!user) {
     return null
   }
@@ -177,7 +196,6 @@ export default function ProjectDetailPage() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline">編集</Button>
-            <Button>タスクを追加</Button>
           </div>
         </div>
 
@@ -286,13 +304,15 @@ export default function ProjectDetailPage() {
                     </div>
                     <div>
                       <label className="text-sm font-medium">予想時間（時間）</label>
-                      <Input
-                        type="number"
-                        min="1"
-                        max="100"
+                      <select
                         value={newTask.estimated_hours}
-                        onChange={(e) => setNewTask(prev => ({ ...prev, estimated_hours: parseInt(e.target.value) || 1 }))}
-                      />
+                        onChange={(e) => setNewTask(prev => ({ ...prev, estimated_hours: parseInt(e.target.value) }))}
+                        className="w-full mt-1 p-2 border rounded"
+                      >
+                        {Array.from({ length: 100 }, (_, i) => i + 1).map(num => (
+                          <option key={num} value={num}>{num}</option>
+                        ))}
+                      </select>
                     </div>
                     <div className="flex gap-2">
                       <Button type="submit">作成</Button>
