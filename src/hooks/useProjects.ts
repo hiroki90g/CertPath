@@ -14,6 +14,7 @@ export interface Project {
   completed_tasks: number | null
   total_estimated_hours: number | null
   studied_hours: number
+  is_public: boolean
   created_at: string
   updated_at: string
   certification?: {
@@ -23,6 +24,11 @@ export interface Project {
     category: string
     difficulty_level: string
     estimated_period: number
+  }
+  user?: {
+    id: string 
+    display_name: string
+    avatarUrl?: string
   }
 }
 
@@ -90,6 +96,33 @@ export const useProjects = () => {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  // 特定の資格にひもづく公開プロジェクトを取得
+  const fetchPublicProjectsByCertification = async (certificationId: string): Promise<Project[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select(`*,
+          user: users(
+            id,
+            display_name,
+            profile_image
+          )  
+        `)
+        .eq('certification_id', certificationId)
+        .eq('is_public', true)
+        .order('created_at', { ascending: false })
+      
+        if (error) throw error
+
+        return data || []
+
+    } catch (err: any) {
+      console.error('プロジェクトの取得に失敗:', err)
+        throw err
+
     }
   }
 
@@ -282,6 +315,7 @@ export const useProjects = () => {
     updateProject,
     deleteProject,
     updateProjectProgress,
+    fetchPublicProjectsByCertification,
     refetch: fetchProjects
   }
 }
