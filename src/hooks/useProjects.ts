@@ -44,13 +44,18 @@ export interface UpdateProjectData {
 }
 
 export const useProjects = () => {
-  const { user } = useAuth()
+  const { user, loading: userLoading } = useAuth()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   // プロジェクト一覧を取得
   const fetchProjects = async () => {
+    // まだユーザー状態をロード中の場合は何もしない
+    if (userLoading) {
+      return
+    }
+    
     if (!user) {
       setProjects([])
       setLoading(false)
@@ -265,7 +270,7 @@ export const useProjects = () => {
   // 初回ロード時にプロジェクト一覧を取得
   useEffect(() => {
     fetchProjects()
-  }, [user])
+  }, [user, userLoading])
 
   return {
     projects,

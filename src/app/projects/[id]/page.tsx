@@ -20,6 +20,7 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showTaskForm, setShowTaskForm] = useState(false)
+  const [isCreatingTask, setIsCreatingTask] = useState(false)
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
@@ -62,9 +63,10 @@ export default function ProjectDetailPage() {
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!newTask.title.trim()) return
+    if (!newTask.title.trim() || isCreatingTask) return
 
     try {
+      setIsCreatingTask(true)
       await createTask({
         project_id: projectId,
         title: newTask.title,
@@ -81,6 +83,8 @@ export default function ProjectDetailPage() {
       alert(`タスクを作成しました`)
     } catch (err: any) {
       alert(`タスクの作成に失敗しました: ${err.message}`)
+    } finally {
+      setIsCreatingTask(false)
     }
   }
 
@@ -315,7 +319,9 @@ export default function ProjectDetailPage() {
                       </select>
                     </div>
                     <div className="flex gap-2">
-                      <Button type="submit">作成</Button>
+                      <Button type="submit" disabled={isCreatingTask}>
+                        {isCreatingTask ? '作成中...' : '作成'}
+                      </Button>
                       <Button 
                         type="button" 
                         variant="outline" 

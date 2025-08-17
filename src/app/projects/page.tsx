@@ -7,7 +7,7 @@ import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Progress } fro
 
 export default function ProjectsPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, loading: userLoading } = useAuth()
   const { projects, loading, error, refetch } = useProjects()
 
   const getStatusBadge = (status: string) => {
@@ -31,6 +31,17 @@ export default function ProjectsPage() {
     const diffTime = target.getTime() - today.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return diffDays
+  }
+
+  // ユーザー状態のロード中
+  if (userLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+        </div>
+      </div>
+    )
   }
 
   if (!user) {
@@ -82,7 +93,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* プロジェクト一覧 */}
-        {projects.length === 0 ? (
+        {!loading && projects.length === 0 ? (
           <Card>
             <CardContent className="text-center py-12">
               <h3 className="text-lg font-medium mb-2">プロジェクトがありません</h3>
