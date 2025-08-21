@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useProjects, type Project } from '@/hooks/useProjects'
-import { useTasks } from '@/hooks/useTasks'
+import { usePublicTasks } from '@/hooks/usePublicTasks'
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Progress, Input } from '@/components/ui'
 
 export default function PublicProjectsPage() {
@@ -18,7 +18,7 @@ export default function PublicProjectsPage() {
   const [error, setError] = useState<string | null>(null)
 
   const { fetchPublicProjectsByCertification } = useProjects()
-  const { tasks, loading: tasksLoading } = useTasks(selectedProject?.id || '')
+  const { tasks, loading: tasksLoading } = usePublicTasks(selectedProject?.id || '')
   
   useEffect(() =>{
     fetchPublicProjects()

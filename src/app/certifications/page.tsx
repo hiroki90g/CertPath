@@ -150,12 +150,21 @@ export default function CertificationsPage() {
                       </a>
                     </div>
                   )}
-                  <Button 
-                    className="w-full"
-                    onClick={() => window.location.href = `/projects/create?certification=${cert.id}`}
-                  >
-                    この資格で始める
-                  </Button>
+                  <div className="space-y-2">
+                    <Button 
+                      className="w-full"
+                      onClick={() => window.location.href = `/projects/create?certification=${cert.id}`}
+                    >
+                      この資格で始める
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => window.location.href = `/certifications/${cert.id}/projects`}
+                    >
+                      他の人のプロジェクトを見る
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}

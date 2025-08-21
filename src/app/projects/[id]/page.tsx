@@ -13,7 +13,7 @@ export default function ProjectDetailPage() {
   const { user, loading: userLoading } = useAuth()
   const projectId = params.id as string
 
-  const { fetchProject, updateProjectProgress } = useProjects()
+  const { fetchProject, updateProject, updateProjectProgress } = useProjects()
   const { tasks, createTask, updateTask, deleteTask, toggleTaskCompletion, loading: tasksLoading } = useTasks(projectId)
   
   const [project, setProject] = useState<any>(null)
@@ -25,6 +25,13 @@ export default function ProjectDetailPage() {
     title: '',
     description: '',
     estimated_hours: 1
+  })
+  const [isEditing, setIsEditing] = useState(false)
+  const [editForm, setEditForm] = useState({
+    project_name:'',
+    target_date: null as string | null,
+    status: 'active',
+    is_public: false
   })
 
   useEffect(() => {
@@ -52,6 +59,12 @@ export default function ProjectDetailPage() {
         return
       }
       setProject(data)
+      setEditForm({
+        project_name: data.project_name,
+        target_date: data.target_date || null,
+        status: data.status || 'active',
+        is_public: data.is_public || false
+      })
     } catch (err: any) {
       console.error('プロジェクト情報の取得に失敗:', err)
       setError(err.message)
@@ -114,6 +127,31 @@ export default function ProjectDetailPage() {
     }
   }
 
+  const handleStartEdit = () => {
+    setIsEditing(true)
+  }
+
+  const handleCancelEdit = () => {
+    setIsEditing(false)
+    setEditForm({
+      project_name: project.project_name || '',
+      target_date: project.target_date || null,
+      status: project.status || 'active',
+      is_public: project.is_public || false
+    })
+  }
+
+  const handleSaveEdit = async () => {
+    try {
+      await updateProject(projectId, editForm)
+      setIsEditing(false)
+      await loadProject() // プロジェクト情報を再読み込み
+      alert('プロジェクト情報を更新しました')
+    } catch (err: any) {
+      alert(`プロジェクトの更新に失敗しました: ${err.message}`)
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active': return <Badge variant="default">進行中</Badge>
@@ -136,6 +174,7 @@ export default function ProjectDetailPage() {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return diffDays
   }
+
 
   // ユーザー状態のロード中
   if (userLoading) {
@@ -190,7 +229,33 @@ export default function ProjectDetailPage() {
         {/* ヘッダー */}
         <div className="flex items-center justify-between">
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold">{project.project_name}</h1>
+            { isEditing ? (
+              <Input 
+                value={editForm.project_name}
+                onChange={(e) => setEditForm(prev => ({ ...prev, project_name: e.target.value }))}
+                className="text-3xl font-bold border-2 border-blue-300"
+                placeholder="プロジェクト名を入力"
+              />
+              ) : (
+                <h1 className="text-3xl font-bold">{project.project_name}</h1>
+              )}
+              {isEditing && (
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    type="checkbox"
+                    id="is_public"
+                    checked={editForm.is_public}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, is_public: e.target.checked }))}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="is_public" className="text-sm font-medium">
+                    このプロジェクトを公開する
+                  </label>
+                  <span className="text-xs text-muted-foreground">
+                    {editForm.is_public ? '(他の人に表示されます)' : '(自分のみ表示)'}
+                  </span>
+                </div>
+              )}
             <div className="flex items-center gap-4">
               {getStatusBadge(project.status)}
               <span className="text-muted-foreground">
@@ -199,7 +264,14 @@ export default function ProjectDetailPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">編集</Button>
+            {isEditing ? (
+              <>
+                <Button onClick={handleSaveEdit}>保存</Button>
+                <Button variant="outline" onClick={handleCancelEdit}>キャンセル</Button>
+              </>
+            ) : (
+              <Button onClick={handleStartEdit}>編集</Button>
+            )}
           </div>
         </div>
 

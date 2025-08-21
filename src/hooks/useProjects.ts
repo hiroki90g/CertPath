@@ -47,6 +47,7 @@ export interface UpdateProjectData {
   completed_tasks?: number | null
   total_estimated_hours?: number | null
   studied_hours?: number
+  is_public?: boolean
 }
 
 export const useProjects = () => {
