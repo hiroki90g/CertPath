@@ -17,8 +17,9 @@ export default function PublicProjectsPage() {
   const [hitMessage, setHitMessage] = useState('')
   const [error, setError] = useState<string | null>(null)
 
-  const { fetchPublicProjectsByCertification } = useProjects()
+  const { fetchPublicProjectsByCertification, copyPublicProject } = useProjects()
   const { tasks, loading: tasksLoading } = usePublicTasks(selectedProject?.id || '')
+  const [ copyingProject, setCopyingProject ] = useState<string | null>(null)
   
   useEffect(() =>{
     fetchPublicProjects()
@@ -40,6 +41,23 @@ export default function PublicProjectsPage() {
       setLoading(false)
     }
   }
+
+  const handleCopyProject = async (projectId: string, projectName: string) => {
+    if (!confirm(`「${projectName}」をコピーしますか？`)) return
+
+    try {
+      setCopyingProject(projectId)
+      await copyPublicProject(projectId)
+      alert(`プロジェクト「${projectName}」をコピーしました！マイページから確認できます。`)
+    } catch (err: any) {
+      console.error('プロジェクトのコピーに失敗:', err)
+      alert('プロジェクトのコピーに失敗しました: ' + err.message)
+    } finally {
+      setCopyingProject(null)
+    }
+  }
+
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="space-y-6">
@@ -70,6 +88,19 @@ export default function PublicProjectsPage() {
                     <CardTitle>{project.project_name}</CardTitle>
                   </CardHeader>
                   <CardContent>
+                    <div className="flex items-center justify-between">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation() // CardのonClickが発火しないようにする
+                          handleCopyProject(project.id, project.project_name)
+                        }}
+                        disabled={copyingProject === project.id}
+                      >
+                        {copyingProject === project.id ? 'コピー中...' : 'このプロジェクトをコピー'}
+                      </Button>
+                    </div>
                     <Progress value={(project.progress_percentage)} className="mt-2" />
                   </CardContent>
                 </Card>
