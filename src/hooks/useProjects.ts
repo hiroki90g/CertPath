@@ -301,6 +301,80 @@ export const useProjects = () => {
     }
   }
 
+  const copyPublicProject = async (originalProjectId: string): Promise<Project> => {
+      if (!user) throw new Error('ログインが必要です')
+
+      try {
+        // 元のプロジェクトとタスクを取得
+        const { data: originalProject, error: projectError } = await supabase
+          .from('projects')
+          .select(`
+            *,
+            certification:certifications(
+              id,
+              name,
+              description,
+              category,
+              difficulty_level,
+              estimated_period
+            ),
+            user:users(
+              id,
+              display_name
+            )
+          `)
+          .eq('id', originalProjectId)
+          .eq('is_public', true)
+          .single()
+
+        if (projectError) throw projectError
+        if (!originalProject) throw new Error('プロジェクトが見つかりません')
+
+        // 元のタスクを取得
+        const { data: originalTasks, error: tasksError } = await supabase
+          .from('tasks')
+          .select('title, description, estimated_hours, order_index')
+          .eq('project_id', originalProjectId)
+          .order('order_index', { ascending: true })
+
+        if (tasksError) throw tasksError
+
+        // プロジェクト名を生成
+        const copiedProjectName = `${originalProject.user?.display_name || '匿名'}の${originalProject.project_name}をコピー`
+
+        // 新しいプロジェクトを作成
+        const newProject = await createProject({
+          certification_id: originalProject.certification_id,
+          project_name: copiedProjectName,
+          target_date: originalProject.target_date
+        })
+
+        // タスクをコピー
+        if (originalTasks && originalTasks.length > 0) {
+          const tasksToInsert = originalTasks.map((task, index) => ({
+            user_id: user.id,
+            project_id: newProject.id,
+            title: task.title,
+            description: task.description,
+            estimated_hours: task.estimated_hours,
+            order_index: task.order_index || index,
+            is_completed: false
+          }))
+
+          const { error: insertError } = await supabase
+            .from('tasks')
+            .insert(tasksToInsert)
+
+          if (insertError) throw insertError
+        }
+
+        return newProject
+      } catch (err: any) {
+        console.error('プロジェクトのコピーに失敗:', err)
+        throw err
+      }
+    }
+
   // 初回ロード時にプロジェクト一覧を取得
   useEffect(() => {
     fetchProjects()
@@ -317,6 +391,7 @@ export const useProjects = () => {
     deleteProject,
     updateProjectProgress,
     fetchPublicProjectsByCertification,
-    refetch: fetchProjects
+    copyPublicProject,
+    refetch: fetchProjects    
   }
 }
