@@ -1,0 +1,90 @@
+[
+  {
+    "name": "ITパスポート",
+    "description": "ITに関する基礎的な知識を証明する国家試験。企業・組織における情報技術の活用や情報セキュリティ等の基本的な知識を問う",
+    "category": "IT基礎",
+    "estimated_period": 90,
+    "difficulty_level": "初級",
+    "official_url": "https://www3.jitec.ipa.go.jp/JitesCbt/index.html",
+    "passing_score": 600,
+    "exam_fee": 7500,
+    "is_active": true
+  },
+  {
+    "name": "基本情報技術者試験",
+    "description": "ITエンジニアの基礎知識を問う国家試験。プログラミングやデータベース、ネットワーク等の基本的な技術知識を証明",
+    "category": "国家試験",
+    "estimated_period": 180,
+    "difficulty_level": "中級",
+    "official_url": "https://www.jitec.ipa.go.jp/1_11seido/fe.html",
+    "passing_score": 600,
+    "exam_fee": 7500,
+    "is_active": true
+  },
+  {
+    "name": "応用情報技術者試験",
+    "description": "より高度なIT技術知識を問う国家試験。システム開発、データベース設計、ネットワーク構築等の実践的な知識を証明",
+    "category": "国家試験",
+    "estimated_period": 270,
+    "difficulty_level": "上級",
+    "official_url": "https://www.jitec.ipa.go.jp/1_11seido/ap.html",
+    "passing_score": 600,
+    "exam_fee": 7500,
+    "is_active": true
+  },
+  {
+    "name": "AWS認定ソリューションアーキテクト – アソシエイト",
+    "description": "Amazon Web Services (AWS) を使用してスケーラブルなシステムを設計および配備する能力を証明する認定",
+    "category": "クラウド",
+    "estimated_period": 120,
+    "difficulty_level": "中級",
+    "official_url": "https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/",
+    "passing_score": 720,
+    "exam_fee": 16500,
+    "is_active": true
+  },
+  {
+    "name": "Google Cloud Professional Cloud Architect",
+    "description": "Google Cloudを使用してスケーラブルで信頼性の高いソリューションを設計・実装・管理する能力を証明する認定",
+    "category": "クラウド",
+    "estimated_period": 150,
+    "difficulty_level": "上級",
+    "official_url": "https://cloud.google.com/certification/cloud-architect",
+    "passing_score": 700,
+    "exam_fee": 25200,
+    "is_active": true
+  },
+  {
+    "name": "情報セキュリティマネジメント試験",
+    "description": "情報セキュリティマネジメントの基本的知識・技能を認定する国家試験。情報セキュリティ確保の重要性を理解し適切な対策を実施できる",
+    "category": "セキュリティ",
+    "estimated_period": 120,
+    "difficulty_level": "初級",
+    "official_url": "https://www.jitec.ipa.go.jp/1_11seido/sg.html",
+    "passing_score": 600,
+    "exam_fee": 7500,
+    "is_active": true
+  },
+  {
+    "name": "Oracle Certified Java Programmer Silver SE 11",
+    "description": "Java SE 11の基本的なプログラミング知識を証明するOracle認定資格。オブジェクト指向プログラミングの基礎知識を問う",
+    "category": "プログラミング",
+    "estimated_period": 90,
+    "difficulty_level": "初級",
+    "official_url": "https://www.oracle.com/jp/education/certification/",
+    "passing_score": 750,
+    "exam_fee": 37730,
+    "is_active": true
+  },
+  {
+    "name": "CompTIA Network+",
+    "description": "ネットワーキングの基礎知識とスキルを証明する国際認定資格。ネットワーク設定、管理、セキュリティ等の実務スキルを問う",
+    "category": "ネットワーク",
+    "estimated_period": 150,
+    "difficulty_level": "中級",
+    "official_url": "https://www.comptia.org/certifications/network",
+    "passing_score": 720,
+    "exam_fee": 46530,
+    "is_active": true
+  }
+]

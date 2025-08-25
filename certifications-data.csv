@@ -1,0 +1,9 @@
+name,description,category,estimated_period,difficulty_level,official_url,passing_score,exam_fee,is_active
+ITパスポート,ITに関する基礎的な知識を証明する国家試験。企業・組織における情報技術の活用や情報セキュリティ等の基本的な知識を問う,IT基礎,90,初級,https://www3.jitec.ipa.go.jp/JitesCbt/index.html,600,7500,true
+基本情報技術者試験,ITエンジニアの基礎知識を問う国家試験。プログラミングやデータベース、ネットワーク等の基本的な技術知識を証明,国家試験,180,中級,https://www.jitec.ipa.go.jp/1_11seido/fe.html,600,7500,true
+応用情報技術者試験,より高度なIT技術知識を問う国家試験。システム開発、データベース設計、ネットワーク構築等の実践的な知識を証明,国家試験,270,上級,https://www.jitec.ipa.go.jp/1_11seido/ap.html,600,7500,true
+AWS認定ソリューションアーキテクト – アソシエイト,Amazon Web Services (AWS) を使用してスケーラブルなシステムを設計および配備する能力を証明する認定,クラウド,120,中級,https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/,720,16500,true
+Google Cloud Professional Cloud Architect,Google Cloudを使用してスケーラブルで信頼性の高いソリューションを設計・実装・管理する能力を証明する認定,クラウド,150,上級,https://cloud.google.com/certification/cloud-architect,700,25200,true
+情報セキュリティマネジメント試験,情報セキュリティマネジメントの基本的知識・技能を認定する国家試験。情報セキュリティ確保の重要性を理解し適切な対策を実施できる,セキュリティ,120,初級,https://www.jitec.ipa.go.jp/1_11seido/sg.html,600,7500,true
+Oracle Certified Java Programmer Silver SE 11,Java SE 11の基本的なプログラミング知識を証明するOracle認定資格。オブジェクト指向プログラミングの基礎知識を問う,プログラミング,90,初級,https://www.oracle.com/jp/education/certification/,750,37730,true
+CompTIA Network+,ネットワーキングの基礎知識とスキルを証明する国際認定資格。ネットワーク設定、管理、セキュリティ等の実務スキルを問う,ネットワーク,150,中級,https://www.comptia.org/certifications/network,720,46530,true
