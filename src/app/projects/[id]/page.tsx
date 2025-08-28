@@ -27,9 +27,14 @@ export default function ProjectDetailPage() {
     estimated_hours: 1
   })
   const [isEditing, setIsEditing] = useState(false)
-  const [editForm, setEditForm] = useState({
+  const [editForm, setEditForm] = useState<{
+    project_name: string
+    target_date: string | null
+    status: 'active' | 'pending' | 'done'
+    is_public: boolean
+  }>({
     project_name:'',
-    target_date: null as string | null,
+    target_date: null,
     status: 'active',
     is_public: false
   })

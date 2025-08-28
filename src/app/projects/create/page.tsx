@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { useProjects } from '@/hooks/useProjects'
@@ -16,7 +16,8 @@ interface Certification {
   difficulty_level: string
 }
 
-export default function CreateProjectPage() {
+// useSearchParamsを使用するコンポーネントを分離
+function CreateProjectForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, loading } = useAuth()
@@ -243,5 +244,20 @@ export default function CreateProjectPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+// メインコンポーネント
+export default function CreateProjectPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+        </div>
+      </div>
+    }>
+      <CreateProjectForm />
+    </Suspense>
   )
 }
