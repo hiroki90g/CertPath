@@ -4,7 +4,20 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/components/ui'
 
-export default function TestSupabasePage() {
+// 本番環境用コンポーネント
+function ProductionMessage() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">テストページ</h1>
+        <p className="text-muted-foreground">このページは開発環境でのみ利用可能です</p>
+      </div>
+    </div>
+  )
+}
+
+// 開発環境用コンポーネント  
+function TestSupabaseComponent() {
   const [connectionStatus, setConnectionStatus] = useState<'testing' | 'success' | 'error'>('testing')
   const [error, setError] = useState<string | null>(null)
   const [projectInfo, setProjectInfo] = useState<any>(null)
@@ -147,4 +160,15 @@ export default function TestSupabasePage() {
       </div>
     </div>
   )
+}
+
+// メインコンポーネント
+export default function TestSupabasePage() {
+  // 本番環境では制限メッセージを表示
+  if (process.env.NODE_ENV === 'production') {
+    return <ProductionMessage />
+  }
+  
+  // 開発環境では通常のテストページを表示
+  return <TestSupabaseComponent />
 }

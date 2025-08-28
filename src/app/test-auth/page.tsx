@@ -5,7 +5,20 @@ import { supabase } from '@/lib/supabase'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import type { User } from '@supabase/supabase-js'
 
-export default function TestAuthPage() {
+// 本番環境用コンポーネント
+function ProductionMessage() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">認証テストページ</h1>
+        <p className="text-muted-foreground">このページは開発環境でのみ利用可能です</p>
+      </div>
+    </div>
+  )
+}
+
+// 開発環境用コンポーネント
+function TestAuthComponent() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -164,4 +177,15 @@ export default function TestAuthPage() {
       </div>
     </div>
   )
+}
+
+// メインコンポーネント
+export default function TestAuthPage() {
+  // 本番環境では制限メッセージを表示
+  if (process.env.NODE_ENV === 'production') {
+    return <ProductionMessage />
+  }
+  
+  // 開発環境では通常のテストページを表示
+  return <TestAuthComponent />
 }
