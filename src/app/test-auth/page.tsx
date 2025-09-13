@@ -194,11 +194,11 @@ function TestAuthComponent() {
 
 // メインコンポーネント
 export default function TestAuthPage() {
-  // デバッグのため一時的に本番環境でも表示
-  // if (process.env.NODE_ENV === 'production') {
-  //   return <ProductionMessage />
-  // }
+  // 本番環境では制限メッセージを表示
+  if (process.env.NODE_ENV === 'production') {
+    return <ProductionMessage />
+  }
   
-  // テストページを表示
+  // 開発環境では通常のテストページを表示
   return <TestAuthComponent />
 }
