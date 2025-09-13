@@ -22,6 +22,14 @@ function TestAuthComponent() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Supabase設定をデバッグ出力
+  useEffect(() => {
+    console.log('=== Supabase Config Debug ===')
+    console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY (first 20 chars):', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20))
+  }, [])
+
   useEffect(() => {
     // 現在のユーザー情報を取得
     const getCurrentUser = async () => {
@@ -47,15 +55,20 @@ function TestAuthComponent() {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true)
-      const { error } = await supabase.auth.signInWithOAuth({
+      console.log('Google OAuth ログイン開始...')
+      console.log('Current origin:', window.location.origin)
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/test-auth`,
         },
       })
       
+      console.log('OAuth response:', { data, error })
+      
       if (error) {
-        console.error('ログインエラー:', error.message)
+        console.error('ログインエラー:', error)
         alert(`ログインエラー: ${error.message}`)
       }
     } catch (error) {
