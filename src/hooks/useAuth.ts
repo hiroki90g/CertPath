@@ -79,14 +79,35 @@ export function useAuth() {
 
 async function mapUser(user: User): Promise<AuthUser> {
   // usersテーブルからユーザー情報を取得
-  const { data: userData, error } = await supabase
+  let { data: userData, error } = await supabase
     .from('users')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
+  // ユーザーが存在しない場合は新規作成
   if (error || !userData) {
-    throw new Error('ユーザー情報が見つかりません')
+    console.log('ユーザーが見つからないため新規作成します:', user.id)
+    
+    const displayName = user.user_metadata?.full_name || user.email!.split('@')[0]
+    
+    const { data: newUserData, error: createError } = await supabase
+      .from('users')
+      .insert({
+        auth_user_id: user.id,
+        email: user.email!,
+        display_name: displayName,
+        avatar_url: user.user_metadata?.avatar_url,
+      })
+      .select('id')
+      .single()
+
+    if (createError) {
+      console.error('ユーザー作成エラー:', createError)
+      throw new Error(`ユーザーの作成に失敗しました: ${createError.message}`)
+    }
+
+    userData = newUserData
   }
 
   return {
